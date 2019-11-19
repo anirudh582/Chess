@@ -1,4 +1,5 @@
 import pygame
+from ChessBoard import ChessBoard 
 
 (width, height) = (800,800)
 
@@ -20,6 +21,27 @@ for i in range(8):
         xpos+=100     
     white = not white
     xpos = 0
+    ypos+=100
+
+
+new_board = ChessBoard()
+
+new_board.show_board()
+
+xpos = 0
+ypos = 0
+tile_width = 100
+tile_height = 100
+
+for i in range(8):
+    for j in range(8):
+        if new_board.board[i][j] != '--':
+            img = pygame.image.load('ChessArt/'+ new_board.board[i][j]+'.png')
+            img = pygame.transform.smoothscale(img,(tile_width,tile_height))
+            screen.blit(img,(xpos,ypos))
+            
+        xpos+=100
+    xpos=0
     ypos+=100
 
 pygame.display.update()
