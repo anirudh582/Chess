@@ -67,6 +67,13 @@ def create_piece(piece_id, alliance, coord):
         print("Error, invalid piece. Cannot create piece")
         exit(101)
 
+def mark_allowed_moves(allowed_moves):
+    global tile_width
+    global tile_height
+    for coord in allowed_moves:
+        pygame.draw.circle(screen, (99,191,124),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+
+
 new_board = ChessBoard()
 
 new_board.show_board()
@@ -75,6 +82,7 @@ img=None
 image_draging = False
 alliance = None
 piece_id = None
+allowed_moves = []
 offset_x = None
 offset_y = None
 
@@ -92,6 +100,9 @@ while running:
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 alliance = new_board.board[i][j].alliance
                 piece_id = new_board.board[i][j].id
+                allowed_moves = new_board.board[i][j].get_allowed_moves(new_board.board)
+                mark_allowed_moves(allowed_moves)
+                pygame.display.update()
                 new_board.board[i][j] = Null((i,j))
                 image_draging = True
                 x,y = j*tile_width, i*tile_height
@@ -102,18 +113,20 @@ while running:
             image_draging = False
             mouse_x, mouse_y = event.pos
             m, l = int(mouse_x / tile_width), int(mouse_y / tile_height)
-            new_board.board[l][m] = create_piece(piece_id, alliance, (l,m))
+            new_board.board[l][m] = create_piece(piece_id, alliance, (m,l))
             screen.blit(img,(m*tile_height,l*tile_width))
             pygame.display.update()
             img_name=None
 
         elif event.type == pygame.MOUSEMOTION and image_draging:
             mouse_x, mouse_y = event.pos
+            mark_allowed_moves(allowed_moves)
             screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
             pygame.display.update()
 
     plot_canvas()
     plot_board(new_board)
+    new_board.show_board()
     pygame.display.update()
     pygame.time.Clock().tick(30)
 

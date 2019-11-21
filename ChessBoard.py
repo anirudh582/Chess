@@ -9,14 +9,14 @@ from Piece.Null import Null
 class ChessBoard:
     def __init__(self):
         self.board = []
-        self.board.append([Rook('B',(0,0)), Knight('B',(0,1)), Bishop('B',(0,2)), Queen('B',(0,3)), King('B',(0,4)), Bishop('B',(0,5)), Knight('B',(0,6)), Rook('B',(0,7))])
-        self.board.append([Pawn('B',(1,0)), Pawn('B',(1,1)), Pawn('B',(1,2)), Pawn('B',(1,3)), Pawn('B',(1,4)), Pawn('B',(1,5)), Pawn('B',(1,6)), Pawn('B',(1,7))])
-        self.board.append([Null((3,0)), Null((3,1)), Null((3,2)), Null((3,3)), Null((3,4)), Null((3,5)), Null((3,6)), Null((3,7))])
-        self.board.append([Null((4,0)), Null((4,1)), Null((4,2)), Null((4,3)), Null((4,4)), Null((4,5)), Null((4,6)), Null((4,7))])
-        self.board.append([Null((5,0)), Null((5,1)), Null((5,2)), Null((5,3)), Null((5,4)), Null((5,5)), Null((5,6)), Null((5,7))])
-        self.board.append([Null((6,0)), Null((6,1)), Null((6,2)), Null((6,3)), Null((6,4)), Null((6,5)), Null((6,6)), Null((6,7))])
-        self.board.append([Pawn('W',(7,0)), Pawn('W',(7,1)), Pawn('W',(7,2)), Pawn('W',(7,3)), Pawn('W',(7,4)), Pawn('W',(7,5)), Pawn('W',(7,6)), Pawn('W',(7,7))])
-        self.board.append([Rook('W',(7,0)), Knight('W',(7,1)), Bishop('W',(7,2)), Queen('W',(7,3)), King('W',(7,4)),Bishop('W',(7,5)), Knight('W',(7,6)), Rook('W',(7,7))])
+        self.board.append([Rook('B',(0,0)), Knight('B',(1,0)), Bishop('B',(2,0)), Queen('B',(3,0)), King('B',(4,0)), Bishop('B',(5,0)), Knight('B',(6,0)), Rook('B',(7,0))])
+        self.board.append([Pawn('B',(0,1)), Pawn('B',(1,1)), Pawn('B',(2,1)), Pawn('B',(3,1)), Pawn('B',(4,1)), Pawn('B',(5,1)), Pawn('B',(6,1)), Pawn('B',(7,1))])
+        self.board.append([Null((0,2)), Null((1,2)), Null((2,2)), Null((3,2)), Null((4,2)), Null((5,2)), Null((6,2)), Null((7,2))])
+        self.board.append([Null((0,3)), Null((1,3)), Null((2,3)), Null((3,3)), Null((4,3)), Null((5,3)), Null((6,3)), Null((7,3))])
+        self.board.append([Null((0,4)), Null((1,4)), Null((2,4)), Null((3,4)), Null((4,4)), Null((5,4)), Null((6,4)), Null((7,4))])
+        self.board.append([Null((0,5)), Null((1,5)), Null((2,5)), Null((3,5)), Null((4,5)), Null((5,5)), Null((6,5)), Null((7,5))])
+        self.board.append([Pawn('W',(0,6)), Pawn('W',(1,6)), Pawn('W',(2,6)), Pawn('W',(3,6)), Pawn('W',(4,6)), Pawn('W',(5,6)), Pawn('W',(6,6)), Pawn('W',(7,6))])
+        self.board.append([Rook('W',(0,7)), Knight('W',(1,7)), Bishop('W',(2,7)), Queen('W',(3,7)), King('W',(4,7)),Bishop('W',(5,7)), Knight('W',(6,7)), Rook('W',(7,7))])
 
     def show_board(self):
         for i in range(8):
