@@ -1,5 +1,12 @@
 import pygame
-from ChessBoard import ChessBoard 
+from ChessBoard import ChessBoard
+from Piece.Rook import Rook
+from Piece.Knight import Knight
+from Piece.Bishop import Bishop
+from Piece.Queen import Queen
+from Piece.King import King
+from Piece.Pawn import Pawn
+from Piece.Null import Null
 
 (width, height) = (800,800)
 
@@ -34,8 +41,8 @@ def plot_board(new_board):
     global tile_height
     for i in range(8):
         for j in range(8):
-            if new_board.board[i][j] != '--':
-                img = pygame.image.load('ChessArt/' + new_board.board[i][j] + '.png')
+            if new_board.board[i][j].id != '-':
+                img = pygame.image.load('ChessArt/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 screen.blit(img, (xpos, ypos))
 
@@ -43,13 +50,31 @@ def plot_board(new_board):
         xpos = 0
         ypos += 100
 
+def create_piece(piece_id, alliance, coord):
+    if piece_id == 'R':
+        return Rook(alliance,coord)
+    elif piece_id == 'N':
+        return Knight(alliance,coord)
+    elif piece_id == 'B':
+        return Bishop(alliance, coord)
+    elif piece_id == 'Q':
+        return Queen(alliance, coord)
+    elif piece_id == 'K':
+        return King(alliance, coord)
+    elif piece_id == 'P':
+        return Pawn(alliance, coord)
+    else:
+        print("Error, invalid piece. Cannot create piece")
+        exit(101)
+
 new_board = ChessBoard()
 
 new_board.show_board()
 
 img=None
 image_draging = False
-img_name = None
+alliance = None
+piece_id = None
 offset_x = None
 offset_y = None
 
@@ -62,21 +87,22 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
             j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
-            if new_board.board[i][j] != "--":
-                img = pygame.image.load('ChessArt/' + new_board.board[i][j] + '.png')
+            if new_board.board[i][j].id != "-":
+                img = pygame.image.load('ChessArt/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
-                img_name = new_board.board[i][j]
-                new_board.board[i][j] = "--"
+                alliance = new_board.board[i][j].alliance
+                piece_id = new_board.board[i][j].id
+                new_board.board[i][j] = Null((i,j))
                 image_draging = True
                 x,y = j*tile_width, i*tile_height
                 offset_x, offset_y = mouse_x - x, mouse_y-y 
 
 
-        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and image_draging:
             image_draging = False
             mouse_x, mouse_y = event.pos
             m, l = int(mouse_x / tile_width), int(mouse_y / tile_height)
-            new_board.board[l][m] = img_name if img_name != None else "--"
+            new_board.board[l][m] = create_piece(piece_id, alliance, (l,m))
             screen.blit(img,(m*tile_height,l*tile_width))
             pygame.display.update()
             img_name=None
@@ -89,7 +115,7 @@ while running:
     plot_canvas()
     plot_board(new_board)
     pygame.display.update()
-    #pygame.time.Clock().tick(30)
+    pygame.time.Clock().tick(30)
 
 
 
