@@ -84,8 +84,7 @@ new_board.show_board()
 
 img=None
 image_draging = False
-alliance = None
-piece_id = None
+piece = None
 allowed_moves = []
 offset_x = None
 offset_y = None
@@ -102,10 +101,9 @@ while running:
             if new_board.board[i][j].id != "-":
                 img = pygame.image.load('ChessArt/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
-                alliance = new_board.board[i][j].alliance
-                piece_id = new_board.board[i][j].id
+                piece = new_board.board[i][j]
                 allowed_moves = new_board.board[i][j].allowed_moves(new_board.board)
-                mark_allowed_moves(allowed_moves,alliance)
+                mark_allowed_moves(allowed_moves,piece.alliance)
                 pygame.display.update()
                 new_board.board[i][j] = Null((i,j))
                 image_draging = True
@@ -117,14 +115,18 @@ while running:
             image_draging = False
             mouse_x, mouse_y = event.pos
             m, l = int(mouse_x / tile_width), int(mouse_y / tile_height)
-            new_board.board[l][m] = create_piece(piece_id, alliance, (m,l))
-            screen.blit(img,(m*tile_height,l*tile_width))
-            pygame.display.update()
+            if (m,l) in allowed_moves:
+                new_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
+                screen.blit(img,(m*tile_height,l*tile_width))
+                pygame.display.update()
+            else:
+                new_board.board[piece.coord[1]][piece.coord[0]] = piece
+                screen.blit(img, (piece.coord[1]*tile_height,piece.coord[0]*tile_width))
             img_name=None
 
         elif event.type == pygame.MOUSEMOTION and image_draging:
             mouse_x, mouse_y = event.pos
-            mark_allowed_moves(allowed_moves,alliance)
+            mark_allowed_moves(allowed_moves,piece.alliance)
             screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
             pygame.display.update()
 
