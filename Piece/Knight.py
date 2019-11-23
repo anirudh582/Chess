@@ -1,12 +1,11 @@
-from helper import coord_inside_board
-from helper import self_piece
+from helper import *
 class Knight:
     id = 'N'
     def __init__(self,alliance,coord):
         self.alliance = alliance
         self.coord = coord
         
-    def get_allowed_moves(self,board):
+    def allowed_moves(self,board):
         allowed_moves = []
         temp = []
         temp.append((self.coord[0]+2,self.coord[1]+1))

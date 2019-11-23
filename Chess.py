@@ -1,4 +1,5 @@
 import pygame
+from helper import *
 from ChessBoard import ChessBoard
 from Piece.Rook import Rook
 from Piece.Knight import Knight
@@ -67,12 +68,15 @@ def create_piece(piece_id, alliance, coord):
         print("Error, invalid piece. Cannot create piece")
         exit(101)
 
-def mark_allowed_moves(allowed_moves):
+def mark_allowed_moves(allowed_moves,alliance):
     global tile_width
     global tile_height
+    global new_board
     for coord in allowed_moves:
-        pygame.draw.circle(screen, (99,191,124),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
-
+        if null_piece(new_board.board, coord):
+            pygame.draw.circle(screen, (99,191,124),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+        elif enemy_piece(new_board.board, coord, alliance):
+            pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
 
 new_board = ChessBoard()
 
@@ -100,8 +104,8 @@ while running:
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 alliance = new_board.board[i][j].alliance
                 piece_id = new_board.board[i][j].id
-                allowed_moves = new_board.board[i][j].get_allowed_moves(new_board.board)
-                mark_allowed_moves(allowed_moves)
+                allowed_moves = new_board.board[i][j].allowed_moves(new_board.board)
+                mark_allowed_moves(allowed_moves,alliance)
                 pygame.display.update()
                 new_board.board[i][j] = Null((i,j))
                 image_draging = True
@@ -120,15 +124,14 @@ while running:
 
         elif event.type == pygame.MOUSEMOTION and image_draging:
             mouse_x, mouse_y = event.pos
-            mark_allowed_moves(allowed_moves)
+            mark_allowed_moves(allowed_moves,alliance)
             screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
             pygame.display.update()
 
     plot_canvas()
     plot_board(new_board)
-    new_board.show_board()
     pygame.display.update()
-    pygame.time.Clock().tick(30)
+    pygame.time.Clock().tick(100)
 
 
 
