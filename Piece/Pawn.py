@@ -34,7 +34,7 @@ class Pawn:
             diag_squares.append((self.coord[0]+1,self.coord[1]-1))
             diag_squares.append((self.coord[0]-1,self.coord[1]-1))
             for square in diag_squares:
-                if enemy_piece(board,square,self.alliance):
+                if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
                     allowed_moves.append(square)
 
         if self.alliance == 'B':
@@ -42,7 +42,7 @@ class Pawn:
             diag_squares.append((self.coord[0]+1,self.coord[1]+1))
             diag_squares.append((self.coord[0]-1,self.coord[1]+1))
             for square in diag_squares:
-                if enemy_piece(board,square,self.alliance):
+                if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
                     allowed_moves.append(square)
 
         #implement pawn en-passant
