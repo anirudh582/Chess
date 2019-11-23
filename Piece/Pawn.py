@@ -48,3 +48,22 @@ class Pawn:
         #implement pawn en-passant
 
         return allowed_moves                
+    
+    def attack_squares(self):
+        attack_squares = []
+        if self.alliance == 'W':
+            diag_squares = []
+            diag_squares.append((self.coord[0]+1,self.coord[1]-1))
+            diag_squares.append((self.coord[0]-1,self.coord[1]-1))
+            for square in diag_squares:
+                if coord_inside_board(square):
+                    attack_squares.append(square)
+
+        if self.alliance == 'B':
+            diag_squares = []
+            diag_squares.append((self.coord[0]+1,self.coord[1]+1))
+            diag_squares.append((self.coord[0]-1,self.coord[1]+1))
+            for square in diag_squares:
+                if coord_inside_board(square):
+                    attack_squares.append(square)
+        return attack_squares
