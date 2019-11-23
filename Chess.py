@@ -88,6 +88,7 @@ piece = None
 allowed_moves = []
 offset_x = None
 offset_y = None
+turn = 'W'
 
 running = True
 while running:
@@ -98,7 +99,7 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
             j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
-            if new_board.board[i][j].id != "-":
+            if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == turn:
                 img = pygame.image.load('ChessArt/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 piece = new_board.board[i][j]
@@ -119,6 +120,7 @@ while running:
                 new_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
                 screen.blit(img,(m*tile_height,l*tile_width))
                 pygame.display.update()
+                turn = 'B' if turn=='W' else 'W'
             else:
                 new_board.board[piece.coord[1]][piece.coord[0]] = piece
                 screen.blit(img, (piece.coord[1]*tile_height,piece.coord[0]*tile_width))
@@ -134,8 +136,3 @@ while running:
     plot_board(new_board)
     pygame.display.update()
     pygame.time.Clock().tick(100)
-
-
-
-
-
