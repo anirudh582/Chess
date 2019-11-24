@@ -5,8 +5,9 @@ class Bishop:
         self.alliance = alliance
         self.coord = coord
 
-    def allowed_moves(self,board):
+    def allowed_moves(self,new_board):
         allowed_moves=[]
+        board = new_board.board
         #diag1
         square = ((self.coord[0]+1,self.coord[1]+1))
         while coord_inside_board(square) and null_piece(board,square):  

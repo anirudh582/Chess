@@ -18,6 +18,7 @@ class ChessBoard:
         self.board.append([Pawn('W',(0,6)), Pawn('W',(1,6)), Pawn('W',(2,6)), Pawn('W',(3,6)), Pawn('W',(4,6)), Pawn('W',(5,6)), Pawn('W',(6,6)), Pawn('W',(7,6))])
         self.board.append([Rook('W',(0,7)), Knight('W',(1,7)), Bishop('W',(2,7)), Queen('W',(3,7)), King('W',(4,7)),Bishop('W',(5,7)), Knight('W',(6,7)), Rook('W',(7,7))])
         self.king = {'W':(4,7),'B':(4,7)}
+        self.attacked_squares = {'W':[],'B':[]}
 
     def show_board(self):
         for i in range(8):
@@ -30,3 +31,21 @@ class ChessBoard:
 
     def update_king_position(self, coord, alliance):
         self.king[alliance]=coord
+
+    def update_attacked_squares(self, alliance):
+        self.attacked_squares[alliance]=[]
+        for i in range(8):
+            for j in range(8):
+                if self.board[i][j].id != '-' and self.board[i][j].alliance != alliance:
+                    if self.board[i][j].id == 'P': 
+                        for square in self.board[i][j].attack_squares():
+                            self.attacked_squares[alliance].append(square)
+                    else:
+                        for square in self.board[i][j].allowed_moves(self):
+                            self.attacked_squares[alliance].append(square)
+                            
+
+
+    def check(self, coord, alliance):
+        return coord in self.attacked_squares[alliance]
+    

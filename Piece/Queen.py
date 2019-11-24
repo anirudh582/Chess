@@ -1,19 +1,83 @@
 from Piece.Rook import Rook
 from Piece.Bishop import Bishop
+from helper import *
 
 class Queen:
     id = 'Q'
     def __init__(self,alliance,coord):
         self.alliance = alliance
         self.coord = coord
-    def allowed_moves(self, board):
+    def allowed_moves(self, new_board):
         allowed_moves=[]
-        temp_rook = Rook(self.alliance,self.coord)
-        temp_bishop = Bishop(self.alliance,self.coord)
-        if len(temp_rook.allowed_moves(board)):
-            for square in temp_rook.allowed_moves(board):
+        board = new_board.board
+
+        #half file #1
+        square = (self.coord[0],self.coord[1]+1)
+        while coord_inside_board(square) and null_piece(board,square):
+            allowed_moves.append(square)
+            square = (square[0],square[1]+1)
+        else:
+            if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
                 allowed_moves.append(square)
-        if len(temp_bishop.allowed_moves(board)):
-            for square in temp_bishop.allowed_moves(board):
+        
+        #half file #2
+        square = (self.coord[0],self.coord[1]-1)
+        while coord_inside_board(square) and null_piece(board,square):
+            allowed_moves.append(square)
+            square = (square[0],square[1]-1)
+        else:
+            if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
                 allowed_moves.append(square)
+
+        #half rank #1
+        square = (self.coord[0]+1,self.coord[1])
+        while coord_inside_board(square) and null_piece(board,square):
+            allowed_moves.append(square)
+            square = (square[0]+1,square[1])
+        else:
+            if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
+                allowed_moves.append(square)
+        
+        #half rank #2
+        square = (self.coord[0]-1,self.coord[1])
+        while coord_inside_board(square) and null_piece(board,square):
+            allowed_moves.append(square)
+            square = (square[0]-1,square[1])
+        else:
+            if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
+                allowed_moves.append(square)
+        
+        #diag1
+        square = ((self.coord[0]+1,self.coord[1]+1))
+        while coord_inside_board(square) and null_piece(board,square):  
+            allowed_moves.append(square)
+            square = (square[0]+1,square[1]+1)
+        else:
+            if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
+                allowed_moves.append(square)
+        #diag2
+        square = ((self.coord[0]-1,self.coord[1]+1))
+        while coord_inside_board(square) and null_piece(board,square):  
+            allowed_moves.append(square)
+            square = (square[0]-1,square[1]+1)
+        else:
+            if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
+                allowed_moves.append(square)
+        #diag3
+        square = ((self.coord[0]-1,self.coord[1]-1))
+        while coord_inside_board(square) and null_piece(board,square):  
+            allowed_moves.append(square)
+            square = (square[0]-1,square[1]-1)
+        else:
+            if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
+                allowed_moves.append(square)
+        #diag4
+        square = ((self.coord[0]+1,self.coord[1]-1))
+        while coord_inside_board(square) and null_piece(board,square):  
+            allowed_moves.append(square)
+            square = (square[0]+1,square[1]-1)
+        else:
+            if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
+                allowed_moves.append(square)
+
         return allowed_moves

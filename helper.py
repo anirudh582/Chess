@@ -13,7 +13,38 @@ def enemy_piece(board,coord,alliance):
     if board[coord[1]][coord[0]].id != '-':
         return board[coord[1]][coord[0]].alliance!=alliance
 
+#def check(board,coord,alliance):
+#    all_enemy_attack_squares = []
+#    for i in range(8):
+#        for j in range(8):
+#            if board[i][j].id != '-' and board[i][j].alliance != alliance:
+#                if board[i][j].id == 'P': 
+#                    for square in board[i][j].attack_squares():
+#                        all_enemy_attack_squares.append(square)
+#                else:
+#                    for square in board[i][j].allowed_moves(board):
+#                        all_enemy_attack_squares.append(square)
+#
+#    return coord in all_enemy_attack_squares
+
 def check(board,coord,alliance):
+    all_enemy_attack_squares = []
+    check = False
+    for i in range(8):
+        for j in range(8):
+            if board[i][j].id != '-' and board[i][j].alliance != alliance:
+                if board[i][j].id == 'P': 
+                    check = coord in board[i][j].attack_squares()
+                    if check:
+                        break
+                else:
+                    check = coord in board[i][j].allowed_moves(board)
+                    if check:
+                        break
+
+    return check 
+
+def attacked_squares(board,alliance):
     all_enemy_attack_squares = []
     for i in range(8):
         for j in range(8):
@@ -25,4 +56,4 @@ def check(board,coord,alliance):
                     for square in board[i][j].allowed_moves(board):
                         all_enemy_attack_squares.append(square)
 
-    return coord in all_enemy_attack_squares
+    return all_enemy_attack_squares

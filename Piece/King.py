@@ -4,14 +4,14 @@ class King:
     def __init__(self,alliance,coord):
         self.alliance = alliance
         self.coord = coord
-    def allowed_moves(self,board):
+    def allowed_moves(self,new_board):
         allowed_moves=[]
+        board = new_board.board
         for i in range(-1,2):
             for j in range(-1,2):
                 if i == 0 and j == 0:
                     continue
                 square = (self.coord[0]+i,self.coord[1]+j)
-                #if coord_inside_board(square) and ((null_piece(board,square) and not check(board, square, self.alliance)) or enemy_piece(board,square,self.alliance)):
-                if coord_inside_board(square): 
+                if coord_inside_board(square) and ((null_piece(board,square) and not new_board.check(square,self.alliance)) or enemy_piece(board,square,self.alliance)):
                     allowed_moves.append(square)
         return allowed_moves

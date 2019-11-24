@@ -5,8 +5,9 @@ class Pawn:
         self.alliance = alliance
         self.coord = coord
 
-    def allowed_moves(self,board):
+    def allowed_moves(self,new_board):
         allowed_moves = []
+        board = new_board.board
         temp = []
         if self.alliance=='W':
             if self.coord[1] == 6:

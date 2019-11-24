@@ -104,7 +104,7 @@ while running:
                 img = pygame.image.load('ChessArt/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 piece = new_board.board[i][j]
-                allowed_moves = new_board.board[i][j].allowed_moves(new_board.board)
+                allowed_moves = new_board.board[i][j].allowed_moves(new_board)
                 mark_allowed_moves(allowed_moves,piece.alliance)
                 pygame.display.update()
                 new_board.board[i][j] = Null((i,j))
@@ -123,6 +123,7 @@ while running:
                 pygame.display.update()
                 if piece.id == 'K':
                     new_board.update_king_position((m,l),piece.alliance)
+                new_board.update_attacked_squares(piece.alliance)
                 turn = 'B' if turn=='W' else 'W'
             else:
                 new_board.board[piece.coord[1]][piece.coord[0]] = piece
@@ -136,6 +137,7 @@ while running:
             pygame.display.update()
 
 #    print(check(new_board.board,new_board.king['W'],'W'))
+#    print(new_board.attacked_squares)
     plot_canvas()
     plot_board(new_board)
     pygame.display.update()
