@@ -17,6 +17,7 @@ class ChessBoard:
         self.board.append([Null((0,5)), Null((1,5)), Null((2,5)), Null((3,5)), Null((4,5)), Null((5,5)), Null((6,5)), Null((7,5))])
         self.board.append([Pawn('W',(0,6)), Pawn('W',(1,6)), Pawn('W',(2,6)), Pawn('W',(3,6)), Pawn('W',(4,6)), Pawn('W',(5,6)), Pawn('W',(6,6)), Pawn('W',(7,6))])
         self.board.append([Rook('W',(0,7)), Knight('W',(1,7)), Bishop('W',(2,7)), Queen('W',(3,7)), King('W',(4,7)),Bishop('W',(5,7)), Knight('W',(6,7)), Rook('W',(7,7))])
+        self.king = {'W':(4,7),'B':(4,7)}
 
     def show_board(self):
         for i in range(8):
@@ -26,3 +27,6 @@ class ChessBoard:
                 else:
                     print('--', end = "|")
             print()
+
+    def update_king_position(self, coord, alliance):
+        self.king[alliance]=coord

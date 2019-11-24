@@ -82,6 +82,7 @@ new_board = ChessBoard()
 
 new_board.show_board()
 
+
 img=None
 image_draging = False
 piece = None
@@ -120,6 +121,8 @@ while running:
                 new_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
                 screen.blit(img,(m*tile_height,l*tile_width))
                 pygame.display.update()
+                if piece.id == 'K':
+                    new_board.update_king_position((m,l),piece.alliance)
                 turn = 'B' if turn=='W' else 'W'
             else:
                 new_board.board[piece.coord[1]][piece.coord[0]] = piece
@@ -132,6 +135,7 @@ while running:
             screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
             pygame.display.update()
 
+#    print(check(new_board.board,new_board.king['W'],'W'))
     plot_canvas()
     plot_board(new_board)
     pygame.display.update()

@@ -25,6 +25,4 @@ def check(board,coord,alliance):
                     for square in board[i][j].allowed_moves(board):
                         all_enemy_attack_squares.append(square)
 
-    print(all_enemy_attack_squares)
     return coord in all_enemy_attack_squares
-                
