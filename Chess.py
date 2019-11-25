@@ -78,6 +78,12 @@ def mark_allowed_moves(allowed_moves,alliance):
         elif enemy_piece(new_board.board, coord, alliance):
             pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
 
+def mark_all_attacked_squares(squares):
+    global tile_width
+    global tile_height
+    for coord in squares:
+        pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+
 new_board = ChessBoard()
 
 new_board.show_board()
@@ -117,17 +123,32 @@ while running:
             image_draging = False
             mouse_x, mouse_y = event.pos
             m, l = int(mouse_x / tile_width), int(mouse_y / tile_height)
+            #if (m,l) in allowed_moves and not new_board.king_in_check(turn):
             if (m,l) in allowed_moves:
                 new_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
                 screen.blit(img,(m*tile_height,l*tile_width))
                 pygame.display.update()
                 if piece.id == 'K':
                     new_board.update_king_position((m,l),piece.alliance)
-                new_board.update_attacked_squares(piece.alliance)
+                new_board.update_attacked_squares('W')
+                new_board.update_attacked_squares('B')
                 turn = 'B' if turn=='W' else 'W'
+#            elif new_board.king_in_check(turn):
+#                look_ahead_board = new_board
+#                look_ahead_board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
+#                if piece.id == 'K':
+#                    look_ahead_board.update_king_position((m,l),piece.alliance)
+#                if not look_ahead_board.king_in_check(turn):
+#                    new_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
+#                    screen.blit(img,(m*tile_height,l*tile_width))
+#                    pygame.display.update()
+#                    if piece.id == 'K':
+#                        new_board.update_king_position((m,l),piece.alliance)
+#                    new_board.update_attacked_squares(piece.alliance)
+#                    turn = 'B' if turn=='W' else 'W'
             else:
                 new_board.board[piece.coord[1]][piece.coord[0]] = piece
-                screen.blit(img, (piece.coord[1]*tile_height,piece.coord[0]*tile_width))
+                screen.blit(img, (piece.coord[0]*tile_width,piece.coord[1]*tile_height))
             img_name=None
 
         elif event.type == pygame.MOUSEMOTION and image_draging:
@@ -137,8 +158,12 @@ while running:
             pygame.display.update()
 
 #    print(check(new_board.board,new_board.king['W'],'W'))
-#    print(new_board.attacked_squares)
+    #print(new_board.attacked_squares)
+#    print(turn)
+    #print(new_board.king_in_check(turn))
+#    mark_all_attacked_squares(new_board.attacked_squares[turn])
+    pygame.display.update()
     plot_canvas()
     plot_board(new_board)
     pygame.display.update()
-    pygame.time.Clock().tick(100)
+    pygame.time.Clock().tick(101)
