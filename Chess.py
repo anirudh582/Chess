@@ -87,9 +87,6 @@ def mark_all_attacked_squares(squares):
 
 new_board = ChessBoard()
 
-new_board.show_board()
-
-
 img=None
 image_draging = False
 piece = None
@@ -124,16 +121,7 @@ while running:
             image_draging = False
             mouse_x, mouse_y = event.pos
             m, l = int(mouse_x / tile_width), int(mouse_y / tile_height)
-            if (m,l) in allowed_moves and not new_board.king_in_check(turn):
-                new_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
-                screen.blit(img,(m*tile_height,l*tile_width))
-                pygame.display.update()
-                if piece.id == 'K':
-                    new_board.update_king_position((m,l),piece.alliance)
-                new_board.update_attacked_squares('W')
-                new_board.update_attacked_squares('B')
-                turn = 'B' if turn=='W' else 'W'
-            elif new_board.king_in_check(turn):
+            if (m,l) in allowed_moves: 
                 look_ahead_board = copy.deepcopy(new_board)
                 look_ahead_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
                 if piece.id == 'K':
