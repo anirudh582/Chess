@@ -52,4 +52,4 @@ class ChessBoard:
         return coord in self.attacked_squares[alliance]
     
     def king_in_check(self,alliance):
-        return self.king[alliance] in self.attacked_squares['B' if alliance=='W' else 'W']
+        return self.king[alliance] in self.attacked_squares[alliance]
