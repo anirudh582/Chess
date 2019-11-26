@@ -20,6 +20,6 @@ class Knight:
         for coord in temp:
             if coord_inside_board(coord) and not self_piece(board,coord,self.alliance):
                 allowed_moves.append(coord)
-        return allowed_moves        
+        return allowed_moves
 
         

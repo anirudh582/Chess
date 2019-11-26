@@ -69,14 +69,15 @@ def create_piece(piece_id, alliance, coord):
         print("Error, invalid piece. Cannot create piece")
         exit(101)
 
-def mark_allowed_moves(allowed_moves,alliance):
+def mark_allowed_moves(allowed_moves,piece):
     global tile_width
     global tile_height
     global new_board
-    for coord in allowed_moves:
+    filtered_moves = filter_by_king_check(allowed_moves,new_board,piece)
+    for coord in filtered_moves:
         if null_piece(new_board.board, coord):
             pygame.draw.circle(screen, (99,191,124),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
-        elif enemy_piece(new_board.board, coord, alliance):
+        elif enemy_piece(new_board.board, coord, piece.alliance):
             pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
 
 def mark_all_attacked_squares(squares):
@@ -109,9 +110,9 @@ while running:
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 piece = new_board.board[i][j]
                 allowed_moves = new_board.board[i][j].allowed_moves(new_board)
-                mark_allowed_moves(allowed_moves,piece.alliance)
+                mark_allowed_moves(allowed_moves,piece)
                 pygame.display.update()
-                new_board.board[i][j] = Null((i,j))
+                new_board.board[i][j] = Null((j,i))
                 image_draging = True
                 x,y = j*tile_width, i*tile_height
                 offset_x, offset_y = mouse_x - x, mouse_y-y 
@@ -126,16 +127,14 @@ while running:
                 look_ahead_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
                 if piece.id == 'K':
                     look_ahead_board.update_king_position((m,l),piece.alliance)
-                look_ahead_board.update_attacked_squares('W')
-                look_ahead_board.update_attacked_squares('B')
+                look_ahead_board.update_all_attacked_squares()
                 if not look_ahead_board.king_in_check(turn):
                     new_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
                     screen.blit(img,(m*tile_height,l*tile_width))
                     pygame.display.update()
                     if piece.id == 'K':
                         new_board.update_king_position((m,l),piece.alliance)
-                    new_board.update_attacked_squares('W')
-                    new_board.update_attacked_squares('B')
+                    new_board.update_all_attacked_squares()
                     turn = 'B' if turn=='W' else 'W'
                 else:
                     new_board.board[piece.coord[1]][piece.coord[0]] = piece
@@ -147,7 +146,7 @@ while running:
 
         elif event.type == pygame.MOUSEMOTION and image_draging:
             mouse_x, mouse_y = event.pos
-            mark_allowed_moves(allowed_moves,piece.alliance)
+            mark_allowed_moves(allowed_moves,piece)
             screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
             pygame.display.update()
             

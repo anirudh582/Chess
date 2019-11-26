@@ -46,7 +46,9 @@ class ChessBoard:
                         for square in self.board[i][j].allowed_moves(self):
                             self.attacked_squares[alliance].append(square)
                             
-
+    def update_all_attacked_squares(self):
+        self.update_attacked_squares('W')
+        self.update_attacked_squares('B')
 
     def check(self, coord, alliance):
         return coord in self.attacked_squares[alliance]
