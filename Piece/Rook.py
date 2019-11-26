@@ -4,6 +4,7 @@ class Rook:
     def __init__(self,alliance,coord):
         self.alliance = alliance
         self.coord = coord
+        self.moved = False
 
     def allowed_moves(self,new_board):
         allowed_moves=[]
@@ -44,3 +45,5 @@ class Rook:
             if coord_inside_board(square) and enemy_piece(board,square,self.alliance):
                 allowed_moves.append(square)
         return allowed_moves
+    def set_moved(self):
+        self.moved = True

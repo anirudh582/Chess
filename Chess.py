@@ -86,6 +86,23 @@ def mark_all_attacked_squares(squares):
     for coord in squares:
         pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
 
+def move_rook_if_castling(king,move_to_coord):
+    global new_board
+    if king.alliance == 'W' and king.coord == (4,7):
+        if move_to_coord == (6,7):
+            new_board.board[7][7] = Null((7,7))
+            new_board.board[7][5] = Rook('W',(5,7))
+        if move_to_coord == (2,7):
+            new_board.board[7][0] = Null((0,7))
+            new_board.board[7][3] = Rook('W',(3,7))
+    if king.alliance == 'B' and king.coord == (4,0):
+        if move_to_coord == (6,0):
+            new_board.board[0][7] = Null((7,0))
+            new_board.board[0][5] = Rook('B',(5,0))
+        if move_to_coord == (2,0):
+            new_board.board[0][0] = Null((0,0))
+            new_board.board[0][3] = Rook('B',(3,0))
+
 new_board = ChessBoard()
 
 img=None
@@ -134,6 +151,9 @@ while running:
                     pygame.display.update()
                     if piece.id == 'K':
                         new_board.update_king_position((m,l),piece.alliance)
+                        move_rook_if_castling(piece,(m,l))
+                    if piece.id == 'R' or piece.id == 'K':
+                        new_board.board[l][m].set_moved()
                     new_board.update_all_attacked_squares()
                     turn = 'B' if turn=='W' else 'W'
                 else:
@@ -155,7 +175,6 @@ while running:
         pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
         pygame.display.update()
        
-
     pygame.display.update()
     plot_canvas()
     plot_board(new_board)
