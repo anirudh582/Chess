@@ -1,5 +1,6 @@
 import pygame
 import copy
+import random
 from helper import *
 from ChessBoard import ChessBoard
 from Piece.Rook import Rook
@@ -9,6 +10,9 @@ from Piece.Queen import Queen
 from Piece.King import King
 from Piece.Pawn import Pawn
 from Piece.Null import Null
+
+pieces = random.choice(['alpha','cburnett','cheq','leipzig','merida'])
+res = 'high'
 
 (width, height) = (800,800)
 
@@ -39,12 +43,14 @@ def plot_canvas():
 def plot_board(new_board):
     xpos = 0
     ypos = 0
+    global pieces
+    global res
     global tile_width
     global tile_height
     for i in range(8):
         for j in range(8):
             if new_board.board[i][j].id != '-':
-                img = pygame.image.load('ChessArtLowRes/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
+                img = pygame.image.load('ChessArt/' + pieces +'/'+ res +'/'+ new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 screen.blit(img, (xpos, ypos))
 
@@ -125,7 +131,7 @@ while running:
             mouse_x, mouse_y = event.pos
             j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
             if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == turn:
-                img = pygame.image.load('ChessArtLowRes/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
+                img = pygame.image.load('ChessArt/'+pieces+'/'+res+'/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 piece = new_board.board[i][j]
                 allowed_moves = new_board.board[i][j].allowed_moves(new_board)
