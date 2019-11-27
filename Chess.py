@@ -104,6 +104,8 @@ def move_rook_if_castling(king,move_to_coord):
             new_board.board[0][3] = Rook('B',(3,0))
 
 new_board = ChessBoard()
+plot_canvas()
+plot_board(new_board)
 
 img=None
 image_draging = False
@@ -123,7 +125,7 @@ while running:
             mouse_x, mouse_y = event.pos
             j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
             if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == turn:
-                img = pygame.image.load('ChessArt/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
+                img = pygame.image.load('ChessArtLowRes/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 piece = new_board.board[i][j]
                 allowed_moves = new_board.board[i][j].allowed_moves(new_board)
@@ -163,12 +165,17 @@ while running:
                 new_board.board[piece.coord[1]][piece.coord[0]] = piece
                 screen.blit(img, (piece.coord[0]*tile_width,piece.coord[1]*tile_height))
             img_name=None
+            plot_canvas()
+            plot_board(new_board)
 
         elif event.type == pygame.MOUSEMOTION and image_draging:
             mouse_x, mouse_y = event.pos
+            plot_canvas()
+            plot_board(new_board)
             mark_allowed_moves(allowed_moves,piece)
             screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
             pygame.display.update()
+            
             
     if new_board.king_in_check(turn):
         coord = new_board.king[turn]
@@ -176,7 +183,7 @@ while running:
         pygame.display.update()
        
     pygame.display.update()
-    plot_canvas()
-    plot_board(new_board)
+    #plot_canvas()
+    #plot_board(new_board)
     pygame.display.update()
-    pygame.time.Clock().tick(101)
+    pygame.time.Clock().tick(100)
