@@ -17,7 +17,7 @@ res = 'high'
 #theme = random.choice(['blue','brown'])
 theme = 'blue'
 
-flip = False
+flip = False 
 
 (width, height) = (800,800)
 
@@ -56,12 +56,16 @@ def plot_board(new_board):
     global res
     global tile_width
     global tile_height
+    global flip
     for i in range(8):
         for j in range(8):
             if new_board.board[i][j].id != '-':
                 img = pygame.image.load('ChessArt/' + pieces +'/'+ res +'/'+ new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
-                screen.blit(img, (xpos, ypos))
+                if not flip:
+                    screen.blit(img, (xpos, ypos))
+                else:
+                    screen.blit(img, (xpos, 700-ypos))
 
             xpos += 100
         xpos = 0
@@ -84,16 +88,35 @@ def create_piece(piece_id, alliance, coord):
         print("Error, invalid piece. Cannot create piece")
         exit(101)
 
+def draw_green_circle(coord):
+    global screen
+    global tile_width
+    global tile_height
+    pygame.draw.circle(screen, (99,191,124),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+
+def draw_red_circle(coord):
+    global screen
+    global tile_width
+    global tile_height
+    pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+
 def mark_allowed_moves(allowed_moves,piece):
     global tile_width
     global tile_height
     global new_board
+    global flip
     filtered_moves = filter_by_king_check(allowed_moves,new_board,piece)
     for coord in filtered_moves:
-        if null_piece(new_board.board, coord):
-            pygame.draw.circle(screen, (99,191,124),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
-        elif enemy_piece(new_board.board, coord, piece.alliance):
-            pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+        if flip:
+            if null_piece(new_board.board, coord):
+                draw_green_circle((coord[0],7-coord[1]))
+            elif enemy_piece(new_board.board, coord, piece.alliance):
+                draw_red_circle((coord[0],7-coord[1])) 
+        else:
+            if null_piece(new_board.board, coord):
+                draw_green_circle(coord)
+            elif enemy_piece(new_board.board, coord, piece.alliance):
+                draw_red_circle(coord) 
 
 def mark_all_attacked_squares(squares):
     global tile_width
@@ -139,6 +162,9 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
             j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
+            if flip:
+                i = 7-i
+                mouse_y = 700 - mouse_y
             if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == turn:
                 img = pygame.image.load('ChessArt/'+pieces+'/'+res+'/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
@@ -156,6 +182,8 @@ while running:
             image_draging = False
             mouse_x, mouse_y = event.pos
             m, l = int(mouse_x / tile_width), int(mouse_y / tile_height)
+            if flip:
+                l = 7-l
             if (m,l) in allowed_moves: 
                 look_ahead_board = copy.deepcopy(new_board)
                 look_ahead_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
@@ -164,8 +192,6 @@ while running:
                 look_ahead_board.update_all_attacked_squares()
                 if not look_ahead_board.king_in_check(turn):
                     new_board.board[l][m] = create_piece(piece.id, piece.alliance, (m,l))
-                    screen.blit(img,(m*tile_height,l*tile_width))
-                    pygame.display.update()
                     if piece.id == 'K':
                         new_board.update_king_position((m,l),piece.alliance)
                         move_rook_if_castling(piece,(m,l))
@@ -188,17 +214,21 @@ while running:
             plot_canvas()
             plot_board(new_board)
             mark_allowed_moves(allowed_moves,piece)
-            screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
+            if flip:
+                screen.blit(img,(mouse_x-offset_x,mouse_y+offset_y))
+            else:
+                screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
             pygame.display.update()
             
             
     if new_board.king_in_check(turn):
         coord = new_board.king[turn]
-        pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+        if flip:
+            draw_red_circle((coord[0],7-coord[1]))
+        else:
+            draw_red_circle(coord)
         pygame.display.update()
        
     pygame.display.update()
-    #plot_canvas()
-    #plot_board(new_board)
     pygame.display.update()
     pygame.time.Clock().tick(100)
