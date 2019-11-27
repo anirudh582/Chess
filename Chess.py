@@ -11,8 +11,13 @@ from Piece.King import King
 from Piece.Pawn import Pawn
 from Piece.Null import Null
 
-pieces = random.choice(['alpha','cburnett','cheq','leipzig','merida'])
+#pieces = random.choice(['alpha','cburnett','cheq','leipzig','merida'])
+pieces = 'merida'
 res = 'high'
+#theme = random.choice(['blue','brown'])
+theme = 'blue'
+
+flip = False
 
 (width, height) = (800,800)
 
@@ -28,8 +33,12 @@ def plot_canvas():
     global tile_width
     global tile_height
     white = True
-    color_white = (255,233,201)
-    color_black = (181,135,94)
+    if theme == 'brown':
+        color_white = (255,233,201)
+        color_black = (181,135,94)
+    elif theme == 'blue':
+        color_white = (237, 243, 245)
+        color_black = (119, 142, 153)
     for i in range(8):
         for j in range(8):
             color = color_white if white else color_black
