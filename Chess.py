@@ -44,7 +44,7 @@ def plot_board(new_board):
     for i in range(8):
         for j in range(8):
             if new_board.board[i][j].id != '-':
-                img = pygame.image.load('ChessArt/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
+                img = pygame.image.load('ChessArtLowRes/' + new_board.board[i][j].alliance + new_board.board[i][j].id + '.png')
                 img = pygame.transform.smoothscale(img, (tile_width, tile_height))
                 screen.blit(img, (xpos, ypos))
 
