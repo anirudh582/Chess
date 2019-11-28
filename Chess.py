@@ -1,5 +1,6 @@
 import settings
 import pygame
+from pygame.locals import *
 import copy
 import random
 from helper import *
@@ -24,12 +25,11 @@ allowed_moves = []
 offset_x = None
 offset_y = None
 turn = 'W'
-
+board_height = settings.board_height
 tile_width = settings.tile_width
 tile_height = settings.tile_height
 screen = settings.screen
 flip = settings.flip
-res = settings.res
 
 running = True
 while running:
@@ -37,12 +37,25 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        elif event.type == VIDEORESIZE:
+            settings.board_width, settings.board_height = event.dict['size']
+            settings.board_width = int(settings.board_width/8)*8
+            settings.board_height = settings.board_width
+            settings.tile_width = int(settings.board_width/8)
+            settings.tile_height = settings.tile_width
+            tile_width = settings.tile_width
+            tile_height = settings.tile_width
+            screen = pygame.display.set_mode((settings.board_width,settings.board_width),RESIZABLE)
+            pygame.display.update()
+            plot_canvas()
+            plot_board(new_board)
+
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
             j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
             if flip:
                 i = 7-i
-                mouse_y = 700 - mouse_y
+                mouse_y = (board_height-tile_height) - mouse_y
             if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == turn:
                 img = load_image(new_board,(i,j))
                 piece = new_board.board[i][j]
@@ -76,7 +89,7 @@ while running:
                 screen.blit(img,(mouse_x-offset_x,mouse_y+offset_y))
             else:
                 screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
-            
+
             
     if new_board.king_in_check(turn):
         coord = new_board.king[turn]

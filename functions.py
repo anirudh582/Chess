@@ -36,10 +36,10 @@ def plot_canvas():
             color = color_white if white else color_black
             pygame.draw.rect(screen,color,(xpos,ypos,tile_width,tile_height))
             white = not white
-            xpos+=100
+            xpos+=tile_width
         white = not white
         xpos = 0
-        ypos+=100
+        ypos+=tile_height
 
 def plot_board(new_board):
     xpos = 0
@@ -48,6 +48,7 @@ def plot_board(new_board):
     res = settings.res
     tile_width = settings.tile_width
     tile_height = settings.tile_height
+    board_height = settings.board_height
     flip = settings.flip
     screen = settings.screen
     for i in range(8):
@@ -57,11 +58,11 @@ def plot_board(new_board):
                 if not flip:
                     screen.blit(img, (xpos, ypos))
                 else:
-                    screen.blit(img, (xpos, 700-ypos))
+                    screen.blit(img, (xpos, (board_height-tile_height)-ypos))
 
-            xpos += 100
+            xpos += tile_width 
         xpos = 0
-        ypos += 100
+        ypos += tile_height
 
 def create_piece(piece_id, alliance, coord):
     if piece_id == 'R':
@@ -83,14 +84,16 @@ def create_piece(piece_id, alliance, coord):
 def draw_green_circle(coord):
     tile_width = settings.tile_width
     tile_height = settings.tile_height
+    radius = 0.15*(tile_width+tile_height)/2
     screen = settings.screen
-    pygame.draw.circle(screen, (99,191,124),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+    pygame.draw.circle(screen, (99,191,124),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),radius)
 
 def draw_red_circle(coord):
     screen = settings.screen
     tile_width = settings.tile_width
     tile_height = settings.tile_height
-    pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),15)
+    radius = 0.15*(tile_width+tile_height)/2
+    pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),radius)
 
 def mark_allowed_moves(new_board,allowed_moves,piece):
     tile_width = settings.tile_width
