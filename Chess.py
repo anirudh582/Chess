@@ -34,6 +34,10 @@ screen = settings.screen
 flip = settings.flip
 resize = []
 videoresize = False 
+accept_move = False
+initial_square = ()
+final_square = ()
+
 
 running = True
 while running:
@@ -60,7 +64,7 @@ while running:
                 image_draging = True
                 x,y = j*tile_width, i*tile_height
                 offset_x, offset_y = mouse_x - x, mouse_y-y 
-
+                initial_square = (j,i)
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and image_draging:
             image_draging = False
@@ -70,6 +74,8 @@ while running:
                 l = 7-l
             if (m,l) in allowed_moves: 
                 turn = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),turn)
+                accept_move = True
+                final_square=(m,l)
             else:
                 reject_move(new_board,piece)
             plot_canvas()
@@ -93,6 +99,10 @@ while running:
         else:
             draw_red_circle(coord)
 
+    if accept_move:
+        mark_move(initial_square,final_square)
+        accept_move=False
+
     if videoresize:
         settings.board_width, settings.board_height = resize[-1]
         settings.board_width = settings.board_width//8*8
@@ -107,6 +117,7 @@ while running:
         pygame.display.update()
         plot_canvas()
         plot_board(new_board)
+        mark_move(initial_square,final_square)
         videoresize = False
 
     pygame.display.update()

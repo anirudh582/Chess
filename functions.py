@@ -95,6 +95,12 @@ def draw_red_circle(coord):
     radius = 0.15*(tile_width+tile_height)/2
     pygame.draw.circle(screen, (255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),radius)
 
+def draw_blue_wireframe_rectangle(coord):
+    screen = settings.screen
+    tile_width = settings.tile_width
+    tile_height = settings.tile_height
+    pygame.draw.rect(screen,(0,0,255),(coord[0]*tile_width,coord[1]*tile_height,tile_width,tile_height),int(0.04*tile_width))
+    
 def mark_allowed_moves(new_board,allowed_moves,piece):
     tile_width = settings.tile_width
     tile_height = settings.tile_height
@@ -192,3 +198,13 @@ def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,turn):
     else:
         reject_move(new_board,piece)
     return turn
+
+def mark_move(initial_square,final_square):
+    flip = settings.flip
+    if flip:
+        draw_blue_wireframe_rectangle((initial_square[0],7-initial_square[1]))
+        draw_blue_wireframe_rectangle((final_square[0], 7-final_square[1]))
+    else:    
+        draw_blue_wireframe_rectangle(initial_square)
+        draw_blue_wireframe_rectangle(final_square)
+
