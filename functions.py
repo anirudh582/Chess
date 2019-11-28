@@ -201,10 +201,11 @@ def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,turn):
 
 def mark_move(initial_square,final_square):
     flip = settings.flip
-    if flip:
-        draw_blue_wireframe_rectangle((initial_square[0],7-initial_square[1]))
-        draw_blue_wireframe_rectangle((final_square[0], 7-final_square[1]))
-    else:    
-        draw_blue_wireframe_rectangle(initial_square)
-        draw_blue_wireframe_rectangle(final_square)
+    if initial_square and final_square:
+        if flip:
+            draw_blue_wireframe_rectangle((initial_square[0],7-initial_square[1]))
+            draw_blue_wireframe_rectangle((final_square[0], 7-final_square[1]))
+        else:    
+            draw_blue_wireframe_rectangle(initial_square)
+            draw_blue_wireframe_rectangle(final_square)
 
