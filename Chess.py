@@ -15,6 +15,7 @@ from Piece.Pawn import Pawn
 from Piece.Null import Null
 
 new_board = ChessBoard()
+
 plot_canvas()
 plot_board(new_board)
 
@@ -26,10 +27,13 @@ offset_x = None
 offset_y = None
 turn = 'W'
 board_height = settings.board_height
+board_width = settings.board_width
 tile_width = settings.tile_width
 tile_height = settings.tile_height
 screen = settings.screen
 flip = settings.flip
+resize = []
+videoresize = False 
 
 running = True
 while running:
@@ -38,18 +42,9 @@ while running:
             running = False
 
         elif event.type == VIDEORESIZE:
-            settings.board_width, settings.board_height = event.dict['size']
-            settings.board_width = int(settings.board_width/8)*8
-            settings.board_height = settings.board_width
-            settings.tile_width = int(settings.board_width/8)
-            settings.tile_height = settings.tile_width
-            tile_width = settings.tile_width
-            tile_height = settings.tile_width
-            screen = pygame.display.set_mode((settings.board_width,settings.board_width),RESIZABLE)
-            pygame.display.update()
-            plot_canvas()
-            plot_board(new_board)
-
+            resize.append(event.dict['size'])
+            videoresize = True
+        
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
             j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
@@ -97,6 +92,22 @@ while running:
             draw_red_circle((coord[0],7-coord[1]))
         else:
             draw_red_circle(coord)
-       
+
+    if videoresize:
+        settings.board_width, settings.board_height = resize[-1]
+        settings.board_width = settings.board_width//8*8
+        settings.board_height = settings.board_width
+        settings.tile_width = settings.board_width//8
+        settings.tile_height = settings.tile_width
+        tile_width = settings.tile_width
+        tile_height = settings.tile_width
+        board_height = settings.board_width
+        board_width = settings.board_width
+        screen = pygame.display.set_mode((settings.board_width,settings.board_width),HWSURFACE|DOUBLEBUF|RESIZABLE)
+        pygame.display.update()
+        plot_canvas()
+        plot_board(new_board)
+        videoresize = False
+
     pygame.display.update()
     pygame.time.Clock().tick(100)

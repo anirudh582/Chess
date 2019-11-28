@@ -14,7 +14,7 @@ board_height = 500
 
 board_width=int(board_width/8)*8
 board_height=int(board_height/8)*8
-screen = pygame.display.set_mode((board_width,board_height),RESIZABLE)
+screen = pygame.display.set_mode((board_width,board_height),HWSURFACE|DOUBLEBUF|RESIZABLE)
 pygame.display.set_caption('Chess')
 
 tile_width = int(board_width/8)
