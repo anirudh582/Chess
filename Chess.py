@@ -22,6 +22,10 @@ s.connect(("10.10.10.109",1234))
 player_alliance = s.recv(2048).decode()
 print(f'player_alliance = {player_alliance}')
 
+if player_alliance =='W':
+    settings.flip = False
+elif player_alliance == 'B':
+    settings.flip = True
 
 
 new_board = ChessBoard()
@@ -62,7 +66,6 @@ while running:
             resize.append(event.dict['size'])
             videoresize = True
         if turn == player_alliance:        
-            print('inside if',turn)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_x, mouse_y = event.pos
                 j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
@@ -106,23 +109,34 @@ while running:
                     screen.blit(img,(mouse_x-offset_x,mouse_y+offset_y))
                 else:
                     screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
-                #pygame.display.update()
 
             if move_accepted:
                 data = (player_alliance, prev_initial_square, final_square)
                 s.send(pickle.dumps(data))
-                print('sent: ', data)
                 move_accepted = False
                 
         else:
-            print('inside else',turn)
             data = pickle.loads(s.recv(2048))
-            print('received: ', data)
             player_alliance_recv, opp_init_sq, opp_final_sq = data
             moved_piece = new_board.board[opp_init_sq[1]][opp_init_sq[0]]
             new_board.board[opp_init_sq[1]][opp_init_sq[0]] = Null(opp_init_sq)
             new_board.board[opp_final_sq[1]][opp_final_sq[0]] = moved_piece
+            #if moved_piece.id == 'K':
+            #    new_board.update_king_position(coord,piece.alliance)
+            #    move_rook_if_castling(new_board,piece,coord)
+            #if moved_piece.id == 'R' or moved_piece.id == 'K':
+            #    new_board.board[opp_final_sq[1]][opp_final_sq[0]].set_moved()
+            #new_board.update_all_attacked_squares()
+            plot_canvas()
             plot_board(new_board)
+            prev_initial_square = opp_init_sq
+            final_square = opp_final_sq
+            #if new_board.king_in_check(turn):
+            #    coord = new_board.king[turn]
+            #    if flip:
+            #        draw_red_wireframe_circle((coord[0],7-coord[1]))
+            #    else:
+            #        draw_red_wireframe_circle(coord)
             if(data):
                 turn = 'B' if turn == 'W' else 'W'
     
