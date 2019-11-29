@@ -74,9 +74,11 @@ while running:
             if flip:
                 l = 7-l
             if (m,l) in allowed_moves: 
-                turn = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),turn)
-                prev_initial_square = initial_square
-                final_square=(m,l)
+                turn, temp_initial_square, temp_final_square = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),turn,initial_square)
+                if temp_initial_square:
+                    prev_initial_square = temp_initial_square
+                if temp_final_square:
+                    final_square = temp_final_square
             else:
                 reject_move(new_board,piece)
             plot_canvas()
@@ -91,15 +93,13 @@ while running:
                 screen.blit(img,(mouse_x-offset_x,mouse_y+offset_y))
             else:
                 screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
-
             
     if new_board.king_in_check(turn):
         coord = new_board.king[turn]
         if flip:
-            draw_red_circle((coord[0],7-coord[1]))
+            draw_red_wireframe_circle((coord[0],7-coord[1]))
         else:
-            draw_red_circle(coord)
-
+            draw_red_wireframe_circle(coord)
 
     if videoresize:
         settings.board_width, settings.board_height = resize[-1]

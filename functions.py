@@ -101,6 +101,13 @@ def draw_blue_wireframe_rectangle(coord):
     tile_height = settings.tile_height
     pygame.draw.rect(screen,(0,0,255),(coord[0]*tile_width,coord[1]*tile_height,tile_width,tile_height),int(0.04*tile_width))
     
+def draw_red_wireframe_circle(coord):
+    screen = settings.screen
+    tile_width = settings.tile_width
+    tile_height = settings.tile_height
+    pygame.draw.circle(screen,(255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),tile_width/2,int(0.04*tile_width))
+
+
 def mark_allowed_moves(new_board,allowed_moves,piece):
     tile_width = settings.tile_width
     tile_height = settings.tile_height
@@ -187,7 +194,9 @@ def accept_move(new_board,piece,coord,turn):
 def reject_move(new_board, piece):
     new_board.board[piece.coord[1]][piece.coord[0]] = piece
 
-def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,turn):
+def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,turn,initial_square):
+    prev_initial_square=()
+    final_square=()
     look_ahead_board = copy.deepcopy(new_board)
     look_ahead_board.board[coord[1]][coord[0]] = create_piece(piece.id, piece.alliance, coord)
     if piece.id == 'K':
@@ -195,9 +204,11 @@ def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,turn):
     look_ahead_board.update_all_attacked_squares()
     if not look_ahead_board.king_in_check(turn):
         turn = accept_move(new_board,piece,coord,turn)
+        prev_initial_square = initial_square
+        final_square=coord
     else:
         reject_move(new_board,piece)
-    return turn
+    return (turn,prev_initial_square,final_square)
 
 def mark_move(initial_square,final_square):
     flip = settings.flip
