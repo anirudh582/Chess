@@ -197,6 +197,7 @@ def reject_move(new_board, piece):
 def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,turn,initial_square):
     prev_initial_square=()
     final_square=()
+    move_accepted = False
     look_ahead_board = copy.deepcopy(new_board)
     look_ahead_board.board[coord[1]][coord[0]] = create_piece(piece.id, piece.alliance, coord)
     if piece.id == 'K':
@@ -206,9 +207,10 @@ def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,turn,initia
         turn = accept_move(new_board,piece,coord,turn)
         prev_initial_square = initial_square
         final_square=coord
+        move_accepted = True
     else:
         reject_move(new_board,piece)
-    return (turn,prev_initial_square,final_square)
+    return (turn,prev_initial_square,final_square,move_accepted)
 
 def mark_move(initial_square,final_square):
     flip = settings.flip
