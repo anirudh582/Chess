@@ -125,9 +125,13 @@ def mark_allowed_moves(new_board,allowed_moves,piece):
             elif enemy_piece(new_board.board, coord, piece.alliance):
                 draw_red_circle(coord) 
 
-def mark_all_attacked_squares(squares):
+def mark_squares(squares):
     for coord in squares:
-        draw_red_circle(coord)
+        if settings.flip:
+            coord_flipped = (coord[0],7-coord[1])
+            draw_red_circle(coord_flipped)
+        else:
+            draw_red_circle(coord)
 
 def move_rook_if_castling(new_board,king,move_to_coord):
     if not settings.flip:
