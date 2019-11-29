@@ -5,6 +5,7 @@ from Piece.Queen import Queen
 from Piece.King import King
 from Piece.Pawn import Pawn
 from Piece.Null import Null
+import settings
 
 class ChessBoard:
     def __init__(self):
@@ -21,7 +22,13 @@ class ChessBoard:
         self.attacked_squares = {'W':[],'B':[]}
         self.update_attacked_squares('W')
         self.update_attacked_squares('B')
-
+        if settings.flip:
+            self.board[0][3] = King('B',(3,0))
+            self.board[0][4] = Queen('B',(4,0))
+            self.board[7][3] = King('W',(3,7))
+            self.board[7][4] = Queen('W',(4,7))
+            self.king = {'W':(3,7),'B':(3,0)}
+       
     def show_board(self):
         for i in range(8):
             for j in range(8):

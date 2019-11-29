@@ -130,20 +130,37 @@ def mark_all_attacked_squares(squares):
         draw_red_circle(coord)
 
 def move_rook_if_castling(new_board,king,move_to_coord):
-    if king.alliance == 'W' and king.coord == (4,7):
-        if move_to_coord == (6,7):
-            new_board.board[7][7] = Null((7,7))
-            new_board.board[7][5] = Rook('W',(5,7))
-        if move_to_coord == (2,7):
-            new_board.board[7][0] = Null((0,7))
-            new_board.board[7][3] = Rook('W',(3,7))
-    if king.alliance == 'B' and king.coord == (4,0):
-        if move_to_coord == (6,0):
-            new_board.board[0][7] = Null((7,0))
-            new_board.board[0][5] = Rook('B',(5,0))
-        if move_to_coord == (2,0):
-            new_board.board[0][0] = Null((0,0))
-            new_board.board[0][3] = Rook('B',(3,0))
+    if not settings.flip:
+        if king.alliance == 'W' and king.coord == (4,7):
+            if move_to_coord == (6,7):
+                new_board.board[7][7] = Null((7,7))
+                new_board.board[7][5] = Rook('W',(5,7))
+            if move_to_coord == (2,7):
+                new_board.board[7][0] = Null((0,7))
+                new_board.board[7][3] = Rook('W',(3,7))
+        if king.alliance == 'B' and king.coord == (4,0):
+            if move_to_coord == (6,0):
+                new_board.board[0][7] = Null((7,0))
+                new_board.board[0][5] = Rook('B',(5,0))
+            if move_to_coord == (2,0):
+                new_board.board[0][0] = Null((0,0))
+                new_board.board[0][3] = Rook('B',(3,0))
+    else:
+        if king.alliance == 'W' and king.coord == (3,7):
+            if move_to_coord == (1,7):
+                new_board.board[7][0] = Null((0,7))
+                new_board.board[7][2] = Rook('W',(2,7))
+            if move_to_coord == (5,7):
+                new_board.board[7][7] = Null((7,7))
+                new_board.board[7][4] = Rook('W',(4,7))
+        if king.alliance == 'B' and king.coord == (3,0):
+            if move_to_coord == (1,0):
+                new_board.board[0][0] = Null((0,0))
+                new_board.board[0][2] = Rook('B',(2,0))
+            if move_to_coord == (5,0):
+                new_board.board[0][7] = Null((7,0))
+                new_board.board[0][4] = Rook('B',(4,0))
+        
 
 def filter_by_king_check(allowed_moves,new_board,piece):
     filtered_moves = []
