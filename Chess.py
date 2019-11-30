@@ -19,7 +19,6 @@ import pickle
 import threading
 
 pygame.init()
-
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(("34.82.161.100",1234))
 player_alliance = s.recv(2048).decode()
@@ -58,17 +57,17 @@ thread = None
 
 running = True
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-            pygame.quit()
+    if settings.turn == player_alliance:        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
 
-        elif event.type == VIDEORESIZE:
-            resize.append(event.dict['size'])
-            videoresize = True
+            elif event.type == VIDEORESIZE:
+                resize.append(event.dict['size'])
+                videoresize = True
 
-        if settings.turn == player_alliance:        
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_x, mouse_y = event.pos
                 j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
                 if flip:
@@ -121,12 +120,13 @@ while running:
                 print('sent: ', data)
                 move_accepted = False
                 
-        else:
-            if not settings.listening_thread_started:
-                thread = threading.Thread(target=receive_opponent_move, args=(new_board,s))
-                thread.daemon = True
-                thread.start()
-                settings.listening_thread_started = True
+    else:
+        print('inside else')
+        if not settings.listening_thread_started:
+            thread = threading.Thread(target=receive_opponent_move, args=(new_board,s))
+            thread.daemon = True
+            thread.start()
+            settings.listening_thread_started = True
 
     
     if new_board.king_in_check(settings.turn):
