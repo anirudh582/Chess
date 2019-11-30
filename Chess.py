@@ -121,7 +121,6 @@ while running:
                 move_accepted = False
                 
     else:
-        print('inside else')
         if not settings.listening_thread_started:
             thread = threading.Thread(target=receive_opponent_move, args=(new_board,s))
             thread.daemon = True
