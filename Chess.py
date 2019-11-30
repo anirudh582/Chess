@@ -21,7 +21,7 @@ import threading
 pygame.init()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(("10.10.10.109",1234))
+s.connect(("34.82.161.100",1234))
 player_alliance = s.recv(2048).decode()
 print(f'player_alliance = {player_alliance}')
 
