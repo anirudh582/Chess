@@ -55,7 +55,6 @@ initial_square = ()
 move_accepted = False
 game_start = True
 thread = None
-turn = settings.turn
 
 running = True
 while running:
@@ -119,20 +118,18 @@ while running:
                 else:
                     data = (player_alliance, settings.initial_square, settings.final_square)
                 s.send(pickle.dumps(data))
-                print('sent:', data)
                 move_accepted = False
                 
         else:
             if not settings.listening_thread_started:
-                print("entering if ")
                 thread = threading.Thread(target=receive_opponent_move, args=(new_board,s))
                 thread.daemon = True
                 thread.start()
                 settings.listening_thread_started = True
 
     
-    if new_board.king_in_check(turn):
-        coord = new_board.king[turn]
+    if new_board.king_in_check(settings.turn):
+        coord = new_board.king[settings.turn]
         if flip:
             draw_red_wireframe_circle((coord[0],7-coord[1]))
         else:

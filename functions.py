@@ -246,9 +246,7 @@ def mark_move():
             draw_blue_wireframe_rectangle(final_square)
 
 def receive_opponent_move(new_board,socket):
-    print('listening thread started: ')
     data = pickle.loads(socket.recv(2048))
-    print('received:', data)
     player_alliance_recv, opp_init_sq_temp, opp_final_sq_temp = data
     if settings.flip:
         opp_init_sq = (7-opp_init_sq_temp[0], opp_init_sq_temp[1])
@@ -256,28 +254,11 @@ def receive_opponent_move(new_board,socket):
     else:
         opp_init_sq = opp_init_sq_temp
         opp_final_sq = opp_final_sq_temp
-    print(opp_init_sq,opp_final_sq)    
     moved_piece = new_board.board[opp_init_sq[1]][opp_init_sq[0]]
     new_board.board[opp_init_sq[1]][opp_init_sq[0]] = Null(opp_init_sq)
-    new_board.board[opp_final_sq[1]][opp_final_sq[0]] = moved_piece
-    if moved_piece.id == 'K':
-        new_board.update_king_position(opp_final_sq,moved_piece.alliance)
-        move_rook_if_castling(new_board,moved_piece,opp_final_sq)
-    if moved_piece.id == 'R' or moved_piece.id == 'K':
-        new_board.board[opp_final_sq[1]][opp_final_sq[0]].set_moved()
-    new_board.update_all_attacked_squares()
+    accept_move(new_board,moved_piece,opp_final_sq)
     plot_canvas()
     plot_board(new_board)
     settings.initial_square = opp_init_sq
     settings.final_square = opp_final_sq
-    if new_board.king_in_check(settings.turn):
-        coord = new_board.king[settings.turn]
-        if settings.flip:
-            draw_red_wireframe_circle((coord[0],7-coord[1]))
-        else:
-            draw_red_wireframe_circle(coord)
-    if(data):
-        print('setting listening_thread_started to false')
-        settings.turn = 'B' if settings.turn == 'W' else 'W'
-        settings.listening_thread_started = False
-    print('thread finished')
+    settings.listening_thread_started = False
