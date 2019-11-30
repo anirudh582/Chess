@@ -118,6 +118,7 @@ while running:
                 else:
                     data = (player_alliance, settings.initial_square, settings.final_square)
                 s.send(pickle.dumps(data))
+                print('sent: ', data)
                 move_accepted = False
                 
         else:
