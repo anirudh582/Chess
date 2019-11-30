@@ -19,3 +19,8 @@ pygame.display.set_caption('Chess')
 
 tile_width = int(board_width/8)
 tile_height = int(board_height/8)
+
+initial_square = ()
+final_square = ()
+listening_thread_started = False
+turn = 'W'
