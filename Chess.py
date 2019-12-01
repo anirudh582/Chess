@@ -1,4 +1,4 @@
-settings.import settings
+import settings
 import pygame
 from pygame.locals import *
 import copy
@@ -42,7 +42,6 @@ allowed_moves = []
 offset_x = None
 offset_y = None
 screen = settings.screen
-flip = settings.flip
 resize = []
 videoresize = False 
 accept_move = False
@@ -66,7 +65,7 @@ while running:
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not settings.listening_thread_started:
                 mouse_x, mouse_y = event.pos
                 j,i = int(mouse_x/settings.tile_width), int(mouse_y/settings.tile_height)
-                if flip:
+                if settings.flip:
                     i = 7-i
                     mouse_y = (settings.board_height-settings.tile_height) - mouse_y
                 if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == settings.turn:
@@ -84,7 +83,7 @@ while running:
                 image_draging = False
                 mouse_x, mouse_y = event.pos
                 m, l = int(mouse_x / settings.tile_width), int(mouse_y / settings.tile_height)
-                if flip:
+                if settings.flip:
                     l = 7-l
                 if (m,l) in allowed_moves: 
                     temp_initial_square, temp_final_square, move_accepted = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),initial_square)
@@ -102,7 +101,7 @@ while running:
                 plot_canvas()
                 plot_board(new_board)
                 mark_allowed_moves(new_board,allowed_moves,piece)
-                if flip:
+                if settings.flip:
                     screen.blit(img,(mouse_x-offset_x,mouse_y+offset_y))
                 else:
                     screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
@@ -123,12 +122,7 @@ while running:
         settings.listening_thread_started = True
     
     
-    if new_board.king_in_check(settings.turn):
-        coord = new_board.king[settings.turn]
-        if flip:
-            draw_red_wireframe_circle((coord[0],7-coord[1]))
-        else:
-            draw_red_wireframe_circle(coord)
+    mark_king(new_board)
 
     if videoresize:
         settings.board_width, settings.board_height = resize[-1]

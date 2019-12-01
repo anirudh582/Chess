@@ -167,6 +167,39 @@ def move_rook_if_castling(new_board,king,move_to_coord):
                 new_board.board[0][4] = Rook('B',(4,0))
         
 
+def check_mate(new_board):
+    #check if king moves prevent check
+    king_coord = new_board.king[settings.turn]
+    if not null_piece(new_board.board,king_coord):
+        king_moves = new_board.board[king_coord[1]][king_coord[0]].allowed_moves(new_board)
+        for move in king_moves:
+            if prevents_check(move, new_board.board[king_coord[1]][king_coord[0]], new_board):
+                return False
+
+    #check if any other piece move prevents check
+    for i in range(8):
+        for j in range(8):
+            if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == settings.turn:
+                for move in new_board.board[i][j].allowed_moves(new_board):
+                    if prevents_check(move,new_board.board[i][j],new_board):
+                        return False
+
+    return True
+
+def prevents_check(coord,piece,new_board):   
+    look_ahead_board = copy.deepcopy(new_board)
+    look_ahead_board.board[piece.coord[1]][piece.coord[0]] = Null(piece.coord)
+    look_ahead_board.board[coord[1]][coord[0]] = create_piece(piece.id, piece.alliance, coord)
+    if piece.id == 'K':
+        look_ahead_board.update_king_position(coord,piece.alliance)
+    look_ahead_board.update_all_attacked_squares()
+    if not look_ahead_board.king_in_check(settings.turn):
+        return True
+    else:
+        return False
+    
+        
+
 def filter_by_king_check(allowed_moves,new_board,piece):
     filtered_moves = []
     look_ahead_board = copy.deepcopy(new_board)
@@ -273,6 +306,28 @@ def receive_opponent_move(new_board,socket):
     accept_move(new_board,moved_piece,opp_final_sq)
     plot_canvas()
     plot_board(new_board)
+    mark_king(new_board)
     settings.initial_square = opp_init_sq
     settings.final_square = opp_final_sq
     settings.listening_thread_started = False
+
+def mark_king(new_board):
+    if new_board.king_in_check(settings.turn) and not settings.checkmate:
+        coord = new_board.king[settings.turn]
+        if check_mate(new_board):
+            if settings.flip:
+                draw_red_circle((coord[0],7-coord[1]))
+            else:
+                draw_red_circle(coord)
+            font = pygame.font.SysFont("comicsans", 30)
+            winner = "White" if settings.turn == 'B' else "Black"
+            msg = "Checkmate " + winner + " Wins!"
+            text_width, text_height = font.size(msg)
+            text = font.render(msg, 1, (0,0,255), True)
+            settings.screen.blit(text,((settings.board_width-text_width)/2, (settings.board_height-text_height)/2))
+            settings.checkmate = True
+        else:
+            if settings.flip:
+                draw_red_wireframe_circle((coord[0],7-coord[1]))
+            else:
+                draw_red_wireframe_circle(coord)
