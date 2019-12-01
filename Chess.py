@@ -113,6 +113,7 @@ while running:
                     data = (player_alliance, settings.initial_square, settings.final_square)
                 s.send(pickle.dumps(data))
                 print('sent: ', data)
+                mark_king(new_board)
                 move_accepted = False
                 
     elif settings.turn != player_alliance and not settings.listening_thread_started:
