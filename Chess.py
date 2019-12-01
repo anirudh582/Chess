@@ -1,4 +1,4 @@
-import settings
+settings.import settings
 import pygame
 from pygame.locals import *
 import copy
@@ -41,10 +41,6 @@ piece = None
 allowed_moves = []
 offset_x = None
 offset_y = None
-board_height = settings.board_height
-board_width = settings.board_width
-tile_width = settings.tile_width
-tile_height = settings.tile_height
 screen = settings.screen
 flip = settings.flip
 resize = []
@@ -67,12 +63,12 @@ while running:
                 resize.append(event.dict['size'])
                 videoresize = True
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not settings.listening_thread_started:
                 mouse_x, mouse_y = event.pos
-                j,i = int(mouse_x/tile_width), int(mouse_y/tile_height)
+                j,i = int(mouse_x/settings.tile_width), int(mouse_y/settings.tile_height)
                 if flip:
                     i = 7-i
-                    mouse_y = (board_height-tile_height) - mouse_y
+                    mouse_y = (settings.board_height-settings.tile_height) - mouse_y
                 if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == settings.turn:
                     img = load_image(new_board,(i,j))
                     piece = new_board.board[i][j]
@@ -80,14 +76,14 @@ while running:
                     mark_allowed_moves(new_board,allowed_moves,piece)
                     new_board.board[i][j] = Null((j,i))
                     image_draging = True
-                    x,y = j*tile_width, i*tile_height
+                    x,y = j*settings.tile_width, i*settings.tile_height
                     offset_x, offset_y = mouse_x - x, mouse_y-y 
                     initial_square = (j,i)
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and image_draging:
                 image_draging = False
                 mouse_x, mouse_y = event.pos
-                m, l = int(mouse_x / tile_width), int(mouse_y / tile_height)
+                m, l = int(mouse_x / settings.tile_width), int(mouse_y / settings.tile_height)
                 if flip:
                     l = 7-l
                 if (m,l) in allowed_moves: 
@@ -140,10 +136,6 @@ while running:
         settings.board_height = settings.board_width
         settings.tile_width = settings.board_width//8
         settings.tile_height = settings.tile_width
-        tile_width = settings.tile_width
-        tile_height = settings.tile_width
-        board_height = settings.board_width
-        board_width = settings.board_width
         screen = pygame.display.set_mode((settings.board_width,settings.board_width),HWSURFACE|DOUBLEBUF|RESIZABLE)
         pygame.display.update()
         plot_canvas()
