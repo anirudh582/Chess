@@ -57,7 +57,7 @@ thread = None
 
 running = True
 while running:
-    if settings.turn == player_alliance:        
+    if settings.turn == player_alliance or settings.listening_thread_started:        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -120,13 +120,12 @@ while running:
                 print('sent: ', data)
                 move_accepted = False
                 
-    else:
-        if not settings.listening_thread_started:
-            thread = threading.Thread(target=receive_opponent_move, args=(new_board,s))
-            thread.daemon = True
-            thread.start()
-            settings.listening_thread_started = True
-
+    elif settings.turn != player_alliance and not settings.listening_thread_started:
+        thread = threading.Thread(target=receive_opponent_move, args=(new_board,s))
+        thread.daemon = True
+        thread.start()
+        settings.listening_thread_started = True
+    
     
     if new_board.king_in_check(settings.turn):
         coord = new_board.king[settings.turn]
