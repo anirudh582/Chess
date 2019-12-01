@@ -134,9 +134,11 @@ while running:
         pygame.display.update()
         plot_canvas()
         plot_board(new_board)
+        mark_move()
         videoresize = False
 
     if not settings.listening_thread_started:
         mark_move()
+
     pygame.display.update()
     pygame.time.Clock().tick(100)
