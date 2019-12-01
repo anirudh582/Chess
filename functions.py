@@ -202,13 +202,26 @@ def load_image(new_board,coord):
     img = pygame.transform.smoothscale(img, (tile_width, tile_height))
     return img
 
+def queening_up(piece,coord):
+    if piece.id == 'P' and piece.alliance == 'W':
+        if coord[1] ==  0:
+            return True
+    elif piece.id == 'P' and piece.alliance == 'B':
+        if coord[1] == 7:
+            return True
+    return False
+
 def accept_move(new_board,piece,coord):
-    new_board.board[coord[1]][coord[0]] = create_piece(piece.id, piece.alliance, coord)
-    if piece.id == 'K':
-        new_board.update_king_position(coord,piece.alliance)
-        move_rook_if_castling(new_board,piece,coord)
-    if piece.id == 'R' or piece.id == 'K':
-        new_board.board[coord[1]][coord[0]].set_moved()
+    if not queening_up(piece,coord):
+        new_board.board[coord[1]][coord[0]] = create_piece(piece.id, piece.alliance, coord)
+        if piece.id == 'K':
+            new_board.update_king_position(coord,piece.alliance)
+            move_rook_if_castling(new_board,piece,coord)
+        if piece.id == 'R' or piece.id == 'K':
+            new_board.board[coord[1]][coord[0]].set_moved()
+    else:
+        new_board.board[coord[1]][coord[0]] = Queen(piece.alliance,coord)
+
     new_board.update_all_attacked_squares()
     settings.turn = 'B' if settings.turn=='W' else 'W'
 
