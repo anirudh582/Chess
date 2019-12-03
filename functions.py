@@ -245,6 +245,7 @@ def queening_up(piece,coord):
     return False
 
 def accept_move(new_board,piece,coord):
+    taken_piece = new_board.board[coord[1]][coord[0]] 
     if not queening_up(piece,coord):
         new_board.board[coord[1]][coord[0]] = create_piece(piece.id, piece.alliance, coord)
         if piece.id == 'K':
@@ -257,6 +258,7 @@ def accept_move(new_board,piece,coord):
 
     new_board.update_all_attacked_squares()
     settings.turn = 'B' if settings.turn=='W' else 'W'
+    return taken_piece
 
 def reject_move(new_board, piece):
     new_board.board[piece.coord[1]][piece.coord[0]] = piece
@@ -264,6 +266,7 @@ def reject_move(new_board, piece):
 def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,initial_square):
     prev_initial_square=()
     final_square=()
+    taken_piece=None
     move_accepted = False
     look_ahead_board = copy.deepcopy(new_board)
     look_ahead_board.board[coord[1]][coord[0]] = create_piece(piece.id, piece.alliance, coord)
@@ -271,13 +274,13 @@ def accept_move_only_if_doesnt_result_in_check(new_board,piece,coord,initial_squ
         look_ahead_board.update_king_position(coord,piece.alliance)
     look_ahead_board.update_all_attacked_squares()
     if not look_ahead_board.king_in_check(settings.turn):
-        accept_move(new_board,piece,coord)
+        taken_piece = accept_move(new_board,piece,coord)
         prev_initial_square = initial_square
         final_square=coord
         move_accepted = True
     else:
         reject_move(new_board,piece)
-    return (prev_initial_square,final_square,move_accepted)
+    return (prev_initial_square,final_square,move_accepted,taken_piece)
 
 def mark_move():
     initial_square = settings.initial_square
@@ -292,24 +295,30 @@ def mark_move():
             draw_blue_wireframe_rectangle(final_square)
 
 def receive_opponent_move(new_board,socket):
-    data = pickle.loads(socket.recv(2048))
-    print('received: ', data)
-    player_alliance_recv, opp_init_sq_temp, opp_final_sq_temp = data
-    if settings.flip:
-        opp_init_sq = (7-opp_init_sq_temp[0], opp_init_sq_temp[1])
-        opp_final_sq = (7-opp_final_sq_temp[0], opp_final_sq_temp[1])
+    try:
+        data = pickle.loads(socket.recv(2048))
+    except EOFError:
+        print('EOF error')
     else:
-        opp_init_sq = opp_init_sq_temp
-        opp_final_sq = opp_final_sq_temp
-    moved_piece = new_board.board[opp_init_sq[1]][opp_init_sq[0]]
-    new_board.board[opp_init_sq[1]][opp_init_sq[0]] = Null(opp_init_sq)
-    accept_move(new_board,moved_piece,opp_final_sq)
-    plot_canvas()
-    plot_board(new_board)
-    mark_king(new_board)
-    settings.initial_square = opp_init_sq
-    settings.final_square = opp_final_sq
-    settings.listening_thread_started = False
+        print('received: ', data)
+        player_alliance_recv, opp_init_sq_temp, opp_final_sq_temp = data
+        if settings.flip:
+            opp_init_sq = (7-opp_init_sq_temp[0], opp_init_sq_temp[1])
+            opp_final_sq = (7-opp_final_sq_temp[0], opp_final_sq_temp[1])
+        else:
+            opp_init_sq = opp_init_sq_temp
+            opp_final_sq = opp_final_sq_temp
+        moved_piece = new_board.board[opp_init_sq[1]][opp_init_sq[0]]
+        new_board.board[opp_init_sq[1]][opp_init_sq[0]] = Null(opp_init_sq)
+        taken_piece = accept_move(new_board,moved_piece,opp_final_sq)
+        plot_canvas()
+        plot_board(new_board)
+        mark_king(new_board)
+        settings.initial_square = opp_init_sq
+        settings.final_square = opp_final_sq
+        settings.listening_thread_started = False
+        settings.history.append((data,taken_piece))
+        settings.seek = len(settings.history)-1
 
 def mark_king(new_board):
     if new_board.king_in_check(settings.turn) and not settings.checkmate:

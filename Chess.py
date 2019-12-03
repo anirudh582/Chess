@@ -86,7 +86,7 @@ while running:
                 if settings.flip:
                     l = 7-l
                 if (m,l) in allowed_moves: 
-                    temp_initial_square, temp_final_square, move_accepted = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),initial_square)
+                    temp_initial_square, temp_final_square, move_accepted, taken_piece = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),initial_square)
                     if temp_initial_square:
                         settings.initial_square = temp_initial_square
                     if temp_final_square:
@@ -106,15 +106,42 @@ while running:
                 else:
                     screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
 
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    if len(settings.history)>0 and settings.seek>=0:
+                        print('inside K_LEFT')
+                        print(settings.seek)
+                        (prev_move_alliance, prev_move_init_sq, prev_move_final_sq), prev_taken_piece = settings.history[settings.seek]
+                        settings.seek -= 1
+                        moved_piece = new_board.board[prev_move_final_sq[1]][prev_move_final_sq[0]]
+                        new_board.board[prev_move_final_sq[1]][prev_move_final_sq[0]] = prev_taken_piece
+                        new_board.board[prev_move_init_sq[1]][prev_move_init_sq[0]] = moved_piece
+                        plot_canvas()
+                        plot_board(new_board)
+                if event.key == pygame.K_RIGHT:
+                    if len(settings.history)>0 and settings.seek<len(settings.history)-1:
+                        print('inside K_RIGHT')
+                        print(settings.seek)
+                        (next_move_alliance, next_move_init_sq, next_move_final_sq), next_taken_piece = settings.history[settings.seek]
+                        settings.seek += 1
+                        moved_piece = new_board.board[next_move_init_sq[1]][next_move_init_sq[0]]
+                        new_board.board[next_move_init_sq[1]][next_move_init_sq[0]] = Null(next_move_init_sq)
+                        new_board.board[next_move_final_sq[1]][next_move_final_sq[0]] = moved_piece
+                        plot_canvas()
+                        plot_board(new_board)
+                        
+
             if move_accepted:
                 if settings.flip:
-                    data = (player_alliance, (7-settings.initial_square[0],settings.initial_square[1]), (7-settings.final_square[0],settings.final_square[1]))
+                    data = [player_alliance, (7-settings.initial_square[0],settings.initial_square[1]), (7-settings.final_square[0],settings.final_square[1])]
                 else:
-                    data = (player_alliance, settings.initial_square, settings.final_square)
-                s.send(pickle.dumps(data))
+                    data = [player_alliance, settings.initial_square, settings.final_square]
+                s.sendall(pickle.dumps(data))
                 print('sent: ', data)
                 mark_king(new_board)
                 move_accepted = False
+                settings.history.append((data,taken_piece))
+                settings.seek = len(settings.history)-1
                 
     elif settings.turn != player_alliance and not settings.listening_thread_started:
         thread = threading.Thread(target=receive_opponent_move, args=(new_board,s))
@@ -141,5 +168,6 @@ while running:
     if not settings.listening_thread_started:
         mark_move()
 
+    #print(settings.history)
     pygame.display.update()
     pygame.time.Clock().tick(100)

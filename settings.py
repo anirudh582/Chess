@@ -25,3 +25,5 @@ final_square = ()
 listening_thread_started = False
 turn = 'W'
 checkmate = False
+history = []
+seek = -1
