@@ -308,6 +308,24 @@ def receive_opponent_move(new_board,socket):
         else:
             opp_init_sq = opp_init_sq_temp
             opp_final_sq = opp_final_sq_temp
+
+        while settings.seek < len(settings.history)-1:
+            (next_move_alliance, next_move_init_sq_temp, next_move_final_sq_temp), next_taken_piece = settings.history[settings.seek + 1]
+            if settings.flip:
+                next_move_init_sq = (7 - next_move_init_sq_temp[0], next_move_init_sq_temp[1])
+                next_move_final_sq = (7 - next_move_final_sq_temp[0], next_move_final_sq_temp[1])
+            else:
+                next_move_init_sq = next_move_init_sq_temp
+                next_move_final_sq = next_move_final_sq_temp
+            settings.seek += 1
+            moved_piece = new_board.board[next_move_init_sq[1]][next_move_init_sq[0]]
+            if moved_piece.id != "-":
+                print('moved piece: ', moved_piece.alliance, moved_piece.id)
+            else:
+                print('moved piece: ', moved_piece.id)
+            new_board.board[next_move_init_sq[1]][next_move_init_sq[0]] = Null(next_move_init_sq)
+            new_board.board[next_move_final_sq[1]][next_move_final_sq[0]] = moved_piece
+
         moved_piece = new_board.board[opp_init_sq[1]][opp_init_sq[0]]
         new_board.board[opp_init_sq[1]][opp_init_sq[0]] = Null(opp_init_sq)
         taken_piece = accept_move(new_board,moved_piece,opp_final_sq)

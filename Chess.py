@@ -62,7 +62,7 @@ while running:
                 resize.append(event.dict['size'])
                 videoresize = True
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not settings.listening_thread_started:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not settings.listening_thread_started and settings.seek==len(settings.history)-1:
                 mouse_x, mouse_y = event.pos
                 j,i = int(mouse_x/settings.tile_width), int(mouse_y/settings.tile_height)
                 if settings.flip:
@@ -110,10 +110,26 @@ while running:
                 if event.key == pygame.K_LEFT:
                     if len(settings.history)>0 and settings.seek>=0:
                         print('inside K_LEFT')
+                        print(settings.history)
                         print(settings.seek)
-                        (prev_move_alliance, prev_move_init_sq, prev_move_final_sq), prev_taken_piece = settings.history[settings.seek]
+                        (prev_move_alliance, prev_move_init_sq_temp, prev_move_final_sq_temp), prev_taken_piece = settings.history[settings.seek]
+                        if settings.flip:
+                            prev_move_init_sq = (7-prev_move_init_sq_temp[0],prev_move_init_sq_temp[1])
+                            prev_move_final_sq = (7-prev_move_final_sq_temp[0], prev_move_final_sq_temp[1])
+                        else:
+                            prev_move_init_sq = prev_move_init_sq_temp
+                            prev_move_final_sq = prev_move_final_sq_temp
                         settings.seek -= 1
                         moved_piece = new_board.board[prev_move_final_sq[1]][prev_move_final_sq[0]]
+                        if moved_piece.id!="-":
+                            print('moved piece: ', moved_piece.alliance, moved_piece.id)
+                        else:
+                            print('moved piece: ', moved_piece.id)
+
+                        if taken_piece.id!="-":
+                            print('taken piece: ',taken_piece.alliance, taken_piece.id)
+                        else:
+                            print('taken piece: ',taken_piece.id)
                         new_board.board[prev_move_final_sq[1]][prev_move_final_sq[0]] = prev_taken_piece
                         new_board.board[prev_move_init_sq[1]][prev_move_init_sq[0]] = moved_piece
                         plot_canvas()
@@ -121,10 +137,21 @@ while running:
                 if event.key == pygame.K_RIGHT:
                     if len(settings.history)>0 and settings.seek<len(settings.history)-1:
                         print('inside K_RIGHT')
+                        print(settings.history)
                         print(settings.seek)
-                        (next_move_alliance, next_move_init_sq, next_move_final_sq), next_taken_piece = settings.history[settings.seek]
+                        (next_move_alliance, next_move_init_sq_temp, next_move_final_sq_temp), next_taken_piece = settings.history[settings.seek+1]
+                        if settings.flip:
+                            next_move_init_sq = (7-next_move_init_sq_temp[0],next_move_init_sq_temp[1])
+                            next_move_final_sq = (7-next_move_final_sq_temp[0], next_move_final_sq_temp[1])
+                        else:
+                            next_move_init_sq = next_move_init_sq_temp
+                            next_move_final_sq = next_move_final_sq_temp
                         settings.seek += 1
                         moved_piece = new_board.board[next_move_init_sq[1]][next_move_init_sq[0]]
+                        if moved_piece.id != "-":
+                            print('moved piece: ',moved_piece.alliance, moved_piece.id)
+                        else:
+                            print('moved piece: ',moved_piece.id)
                         new_board.board[next_move_init_sq[1]][next_move_init_sq[0]] = Null(next_move_init_sq)
                         new_board.board[next_move_final_sq[1]][next_move_final_sq[0]] = moved_piece
                         plot_canvas()
