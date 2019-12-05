@@ -19,6 +19,7 @@ def plot_canvas():
     tile_height = settings.tile_height
     theme = settings.theme
     screen = settings.screen
+    screen.fill((61, 55, 55))
     white = True
     if theme == 'brown':
         color_white = (255,233,201)

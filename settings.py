@@ -12,18 +12,24 @@ flip = random.choice ([False,True])
 board_width = 500 
 board_height = 500 
 
-board_width=int(board_width/8)*8
-board_height=int(board_height/8)*8
-screen = pygame.display.set_mode((board_width,board_height),HWSURFACE|DOUBLEBUF|RESIZABLE)
-pygame.display.set_caption('Chess')
-
 tile_width = int(board_width/8)
 tile_height = int(board_height/8)
+buff = (tile_width+tile_height)//2
+
+
+board_width=int(board_width/8)*8
+board_height=int(board_height/8)*8
+screen = pygame.display.set_mode((board_width+buff,board_height),HWSURFACE|DOUBLEBUF|RESIZABLE)
+pygame.display.set_caption('Chess')
+
 
 initial_square = ()
 final_square = ()
 listening_thread_started = False
 turn = 'W'
 checkmate = False
+timeout = False
 history = []
 seek = -1
+time = 60
+opponent_time = time

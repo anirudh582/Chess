@@ -50,6 +50,8 @@ move_accepted = False
 game_start = True
 thread = None
 
+pygame.time.set_timer(pygame.USEREVENT,1000)
+
 running = True
 while running:
     if settings.turn == player_alliance or settings.listening_thread_started:        
@@ -62,7 +64,7 @@ while running:
                 resize.append(event.dict['size'])
                 videoresize = True
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not settings.listening_thread_started and settings.seek==len(settings.history)-1:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not settings.listening_thread_started and settings.seek==len(settings.history)-1 and settings.time>0:
                 mouse_x, mouse_y = event.pos
                 j,i = int(mouse_x/settings.tile_width), int(mouse_y/settings.tile_height)
                 if settings.flip:
@@ -157,6 +159,11 @@ while running:
                         plot_canvas()
                         plot_board(new_board)
                         
+            elif event.type == pygame.USEREVENT:
+                if len(settings.history)>0 and not settings.listening_thread_started and settings.time>0:
+                    settings.time = settings.time - 1 
+                elif len(settings.history)>0 and settings.listening_thread_started and settings.opponent_time>0:
+                    settings.opponent_time = settings.opponent_time - 1
 
             if move_accepted:
                 if settings.flip:
@@ -170,6 +177,8 @@ while running:
                 settings.history.append((data,taken_piece))
                 settings.seek = len(settings.history)-1
                 
+            
+
     elif settings.turn != player_alliance and not settings.listening_thread_started:
         thread = threading.Thread(target=receive_opponent_move, args=(new_board,s))
         thread.daemon = True
@@ -185,7 +194,8 @@ while running:
         settings.board_height = settings.board_width
         settings.tile_width = settings.board_width//8
         settings.tile_height = settings.tile_width
-        screen = pygame.display.set_mode((settings.board_width,settings.board_width),HWSURFACE|DOUBLEBUF|RESIZABLE)
+        settings.buff = settings.tile_width
+        screen = pygame.display.set_mode((settings.board_width+settings.buff,settings.board_width),HWSURFACE|DOUBLEBUF|RESIZABLE)
         pygame.display.update()
         plot_canvas()
         plot_board(new_board)
@@ -194,7 +204,42 @@ while running:
 
     if not settings.listening_thread_started:
         mark_move()
+        
 
-    #print(settings.history)
+    text1 = str(settings.time)
+    text2 = str(settings.opponent_time) 
+    font = pygame.font.SysFont('Consolas',30)
+    pygame.draw.rect(screen, (61, 55, 55), (settings.board_width,0,settings.buff,settings.board_height))
+    if player_alliance == 'W':
+        if not settings.flip:
+            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width,settings.board_height-0.5*settings.tile_height))
+            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width,0.1*settings.tile_height))
+        else:
+            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width,0.1*settings.tile_height))
+            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width,settings.board_height-0.5*settings.tile_height))
+
+    else:
+        if settings.flip:
+            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width,settings.board_height-0.5*settings.tile_height))
+            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width,0.1*settings.tile_height))
+        else:
+            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width,0.1*settings.tile_height))
+            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width,settings.board_height-0.5*settings.tile_height))
+
+    if settings.time == 0 and settings.opponent_time>0 and not settings.timeout:
+        winner = "White" if player_alliance == 'B' else "Black"
+        msg = "Timeout " + winner + " Wins!"
+        text_width, text_height = font.size(msg)
+        text = font.render(msg, 1, (0,0,255), True)
+        settings.screen.blit(text,((settings.board_width-text_width)/2, (settings.board_height-text_height)/2))
+        settings.timeout = True
+    elif settings.time > 0 and settings.opponent_time==0 and not settings.timeout:
+        winner = "Black" if player_alliance == 'B' else "White"
+        msg = "Timeout " + winner + " Wins!"
+        text_width, text_height = font.size(msg)
+        text = font.render(msg, 1, (0,0,255), True)
+        settings.screen.blit(text,((settings.board_width-text_width)/2, (settings.board_height-text_height)/2))
+        settings.timeout = True
+
     pygame.display.update()
     pygame.time.Clock().tick(100)
