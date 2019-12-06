@@ -142,9 +142,9 @@ while running:
                         plot_board(new_board)
                         
             elif event.type == pygame.USEREVENT:
-                if len(settings.history)>0 and not settings.listening_thread_started and int(settings.time*60)>0 and not settings.checkmate:
+                if len(settings.history)>1 and not settings.listening_thread_started and int(settings.time*60)>0 and not settings.checkmate:
                     settings.time = settings.time - 1/60
-                elif len(settings.history)>0 and settings.listening_thread_started and int(settings.opponent_time*60)>0 and not settings.checkmate:
+                elif len(settings.history)>1 and settings.listening_thread_started and int(settings.opponent_time*60)>0 and not settings.checkmate:
                     settings.opponent_time = settings.opponent_time - 1/60
 
             if move_accepted:
