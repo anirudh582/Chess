@@ -97,6 +97,7 @@ while running:
                     reject_move(new_board,piece)
                 plot_canvas()
                 plot_board(new_board)
+                mark_king(new_board)
 
             elif event.type == pygame.MOUSEMOTION and image_draging:
                 mouse_x, mouse_y = event.pos
@@ -111,9 +112,6 @@ while running:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     if len(settings.history)>0 and settings.seek>=0:
-                        print('inside K_LEFT')
-                        print(settings.history)
-                        print(settings.seek)
                         (prev_move_alliance, prev_move_init_sq_temp, prev_move_final_sq_temp, _), prev_taken_piece = settings.history[settings.seek]
                         if settings.flip:
                             prev_move_init_sq = (7-prev_move_init_sq_temp[0],prev_move_init_sq_temp[1])
@@ -123,24 +121,12 @@ while running:
                             prev_move_final_sq = prev_move_final_sq_temp
                         settings.seek -= 1
                         moved_piece = new_board.board[prev_move_final_sq[1]][prev_move_final_sq[0]]
-                        if moved_piece.id!="-":
-                            print('moved piece: ', moved_piece.alliance, moved_piece.id)
-                        else:
-                            print('moved piece: ', moved_piece.id)
-
-                        if taken_piece.id!="-":
-                            print('taken piece: ',taken_piece.alliance, taken_piece.id)
-                        else:
-                            print('taken piece: ',taken_piece.id)
                         new_board.board[prev_move_final_sq[1]][prev_move_final_sq[0]] = prev_taken_piece
                         new_board.board[prev_move_init_sq[1]][prev_move_init_sq[0]] = moved_piece
                         plot_canvas()
                         plot_board(new_board)
                 if event.key == pygame.K_RIGHT:
                     if len(settings.history)>0 and settings.seek<len(settings.history)-1:
-                        print('inside K_RIGHT')
-                        print(settings.history)
-                        print(settings.seek)
                         (next_move_alliance, next_move_init_sq_temp, next_move_final_sq_temp, _), next_taken_piece = settings.history[settings.seek+1]
                         if settings.flip:
                             next_move_init_sq = (7-next_move_init_sq_temp[0],next_move_init_sq_temp[1])
@@ -150,10 +136,6 @@ while running:
                             next_move_final_sq = next_move_final_sq_temp
                         settings.seek += 1
                         moved_piece = new_board.board[next_move_init_sq[1]][next_move_init_sq[0]]
-                        if moved_piece.id != "-":
-                            print('moved piece: ',moved_piece.alliance, moved_piece.id)
-                        else:
-                            print('moved piece: ',moved_piece.id)
                         new_board.board[next_move_init_sq[1]][next_move_init_sq[0]] = Null(next_move_init_sq)
                         new_board.board[next_move_final_sq[1]][next_move_final_sq[0]] = moved_piece
                         plot_canvas()
@@ -176,7 +158,7 @@ while running:
                 move_accepted = False
                 settings.history.append((data,taken_piece))
                 settings.seek = len(settings.history)-1
-                
+
             
 
     elif settings.turn != player_alliance and not settings.listening_thread_started:
@@ -186,7 +168,7 @@ while running:
         settings.listening_thread_started = True
     
     
-    mark_king(new_board)
+    #mark_king(new_board)
 
     if videoresize:
         settings.board_width, settings.board_height = resize[-1]
@@ -200,6 +182,7 @@ while running:
         plot_canvas()
         plot_board(new_board)
         mark_move()
+        mark_king(new_board)
         videoresize = False
 
     if not settings.listening_thread_started:
@@ -242,6 +225,7 @@ while running:
         text = font.render(msg, 1, (0,0,255), True)
         settings.screen.blit(text,((settings.board_width-text_width)/2, (settings.board_height-text_height)/2))
         settings.timeout = True
+
 
     pygame.display.update()
     pygame.time.Clock().tick(100)
