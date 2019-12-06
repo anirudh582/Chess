@@ -70,7 +70,7 @@ while running:
                 if settings.flip:
                     i = 7-i
                     mouse_y = (settings.board_height-settings.tile_height) - mouse_y
-                if new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == settings.turn:
+                if coord_inside_board((j,i)) and new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == settings.turn:
                     img = load_image(new_board,(i,j))
                     piece = new_board.board[i][j]
                     allowed_moves = new_board.board[i][j].allowed_moves(new_board)
