@@ -31,5 +31,5 @@ checkmate = False
 timeout = False
 history = []
 seek = -1
-time = 60
+time = 5
 opponent_time = time
