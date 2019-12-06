@@ -298,11 +298,11 @@ def mark_move():
 def receive_opponent_move(new_board,socket):
     try:
         data = pickle.loads(socket.recv(2048))
-    except EOFError:
-        print('EOF error')
+    except:
+        print('an exception has occured')
     else:
         print('received: ', data)
-        player_alliance_recv, opp_init_sq_temp, opp_final_sq_temp = data
+        player_alliance_recv, opp_init_sq_temp, opp_final_sq_temp, settings.opponent_time = data
         if settings.flip:
             opp_init_sq = (7-opp_init_sq_temp[0], opp_init_sq_temp[1])
             opp_final_sq = (7-opp_final_sq_temp[0], opp_final_sq_temp[1])

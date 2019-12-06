@@ -25,7 +25,7 @@ def threaded_client(conn, player):
         try:
             data = pickle.loads(conn.recv(2048))
             print("Received: ", data)
-            player_alliance_recv, init_sq, final_sq = data
+            player_alliance_recv, init_sq, final_sq, _= data
 
             if not data:
                 print("Disconnected")
@@ -45,7 +45,7 @@ def threaded_client(conn, player):
         except:
             break
 
-    print("Lost connection")
+    print("Lost connection: ", player_alliance[player])
     conn.close()
         
 

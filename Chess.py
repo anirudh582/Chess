@@ -114,7 +114,7 @@ while running:
                         print('inside K_LEFT')
                         print(settings.history)
                         print(settings.seek)
-                        (prev_move_alliance, prev_move_init_sq_temp, prev_move_final_sq_temp), prev_taken_piece = settings.history[settings.seek]
+                        (prev_move_alliance, prev_move_init_sq_temp, prev_move_final_sq_temp, _), prev_taken_piece = settings.history[settings.seek]
                         if settings.flip:
                             prev_move_init_sq = (7-prev_move_init_sq_temp[0],prev_move_init_sq_temp[1])
                             prev_move_final_sq = (7-prev_move_final_sq_temp[0], prev_move_final_sq_temp[1])
@@ -141,7 +141,7 @@ while running:
                         print('inside K_RIGHT')
                         print(settings.history)
                         print(settings.seek)
-                        (next_move_alliance, next_move_init_sq_temp, next_move_final_sq_temp), next_taken_piece = settings.history[settings.seek+1]
+                        (next_move_alliance, next_move_init_sq_temp, next_move_final_sq_temp, _), next_taken_piece = settings.history[settings.seek+1]
                         if settings.flip:
                             next_move_init_sq = (7-next_move_init_sq_temp[0],next_move_init_sq_temp[1])
                             next_move_final_sq = (7-next_move_final_sq_temp[0], next_move_final_sq_temp[1])
@@ -167,9 +167,9 @@ while running:
 
             if move_accepted:
                 if settings.flip:
-                    data = [player_alliance, (7-settings.initial_square[0],settings.initial_square[1]), (7-settings.final_square[0],settings.final_square[1])]
+                    data = [player_alliance, (7-settings.initial_square[0],settings.initial_square[1]), (7-settings.final_square[0],settings.final_square[1]),settings.time]
                 else:
-                    data = [player_alliance, settings.initial_square, settings.final_square]
+                    data = [player_alliance, settings.initial_square, settings.final_square,settings.time]
                 s.sendall(pickle.dumps(data))
                 print('sent: ', data)
                 mark_king(new_board)
