@@ -209,22 +209,24 @@ while running:
     text1 = str(int(settings.time/1))+ ":" + str(int(settings.time%1 * 60)).zfill(2)
     text2 = str(int(settings.opponent_time//1)) + ":" + str(int(settings.opponent_time%1 * 60)).zfill(2)
     font = pygame.font.SysFont('Consolas',20)
+    text1_width, text1_height = font.size(text1)
+    text2_width, text2_height = font.size(text2)
     pygame.draw.rect(screen, (61, 55, 55), (settings.board_width,0,settings.buff,settings.board_height))
     if player_alliance == 'W':
         if not settings.flip:
-            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width,settings.board_height-0.5*settings.tile_height))
-            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width,0.1*settings.tile_height))
+            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width+(settings.buff-text1_width)/2,settings.board_height-0.025*settings.tile_height-text1_height))
+            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width+(settings.buff-text2_width)/2,0.1*settings.tile_height))
         else:
-            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width,0.1*settings.tile_height))
-            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width,settings.board_height-0.5*settings.tile_height))
+            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width+(settings.buff-text1_width)/2,0.1*settings.tile_height))
+            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width+(settings.buff-text2_width)/2,settings.board_height-0.025*settings.tile_height-text2_height))
 
     else:
         if settings.flip:
-            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width,settings.board_height-0.5*settings.tile_height))
-            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width,0.1*settings.tile_height))
+            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width+(settings.buff-text1_width)/2,settings.board_height-0.025*settings.tile_height-text1_height))
+            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width+(settings.buff-text2_width)/2,0.1*settings.tile_height))
         else:
-            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width,0.1*settings.tile_height))
-            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width,settings.board_height-0.5*settings.tile_height))
+            screen.blit(font.render(text1,True,(0,255,0)),(settings.board_width+(settings.buff-text1_width)/2,0.1*settings.tile_height))
+            screen.blit(font.render(text2,True,(0,255,0)),(settings.board_width+(settings.buff-text2_width)/2,settings.board_height-0.025*settings.tile_height-text2_height))
 
     if int(settings.time*60) == 0 and int(settings.opponent_time*60)>0 and not settings.timeout:
         winner = "White" if player_alliance == 'B' else "Black"
