@@ -359,3 +359,11 @@ def mark_king(new_board):
                 draw_red_wireframe_circle((coord[0],7-coord[1]))
             else:
                 draw_red_wireframe_circle(coord)
+
+def status(new_board,s):
+    settings.status = s.recv(2048).decode()    
+    print('received: ', settings.status)
+    settings.status_thread_started = False
+    if settings.status == "ready":
+        plot_canvas()
+        plot_board(new_board)

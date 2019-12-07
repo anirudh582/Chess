@@ -33,3 +33,5 @@ history = []
 seek = -1
 time = 5
 opponent_time = time
+status = 'not ready'
+status_thread_started = False

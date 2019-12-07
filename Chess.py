@@ -35,6 +35,7 @@ new_board = ChessBoard()
 plot_canvas()
 plot_board(new_board)
 
+
 img=None
 image_draging = False
 piece = None
@@ -48,14 +49,29 @@ accept_move = False
 initial_square = ()
 move_accepted = False
 game_start = True
-thread = None
 
 pygame.time.set_timer(pygame.USEREVENT,1000)
 
+
+
 running = True
 while running:
+
+    if settings.status == "not ready" and not settings.status_thread_started:
+        thread = threading.Thread(target=status, args=(new_board,s))
+        thread.daemon = True
+        thread.start()
+        settings.status_thread_started = True
+         
+        font = pygame.font.SysFont("comicsans", 30)
+        msg = "Waiting for Opponent"
+        text_width, text_height = font.size(msg)
+        text = font.render(msg, 1, (0,0,255), True)
+        settings.screen.blit(text,((settings.board_width-text_width)/2, (settings.board_height-text_height)/2))
+
     if settings.turn == player_alliance or settings.listening_thread_started:        
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
@@ -64,7 +80,7 @@ while running:
                 resize.append(event.dict['size'])
                 videoresize = True
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not settings.listening_thread_started and settings.seek==len(settings.history)-1 and int(settings.time*60)>0:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not settings.listening_thread_started and settings.seek==len(settings.history)-1 and int(settings.time*60)>0 and settings.status == "ready":
                 mouse_x, mouse_y = event.pos
                 j,i = int(mouse_x/settings.tile_width), int(mouse_y/settings.tile_height)
                 if settings.flip:
@@ -167,8 +183,6 @@ while running:
         thread.start()
         settings.listening_thread_started = True
     
-    
-    #mark_king(new_board)
 
     if videoresize:
         settings.board_width, settings.board_height = resize[-1]
@@ -225,7 +239,6 @@ while running:
         text = font.render(msg, 1, (0,0,255), True)
         settings.screen.blit(text,((settings.board_width-text_width)/2, (settings.board_height-text_height)/2))
         settings.timeout = True
-
 
     pygame.display.update()
     pygame.time.Clock().tick(100)
