@@ -20,6 +20,12 @@ import threading
 
 pygame.init()
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+if hasattr(socket, "TCP_KEEPIDLE") and hasattr(socket, "TCP_KEEPINTVL") and hasattr(socket, "TCP_KEEPCNT"):
+    print('inside tcp options if')
+    s.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 1 * 60)
+    s.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 2 * 60)
+    s.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 20)
 s.connect(("34.82.161.100",1234))
 player_alliance = s.recv(2048).decode()
 print(f'player_alliance = {player_alliance}')

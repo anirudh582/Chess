@@ -299,7 +299,7 @@ def receive_opponent_move(new_board,socket):
     try:
         data = pickle.loads(socket.recv(2048))
     except Exception as e:
-        print(str(e))
+        print("exception while receiving opponent's move",str(e))
     else:
         print('received: ', data)
         player_alliance_recv, opp_init_sq_temp, opp_final_sq_temp, settings.opponent_time = data
