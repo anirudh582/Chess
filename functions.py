@@ -109,6 +109,15 @@ def draw_red_wireframe_circle(coord):
     tile_height = settings.tile_height
     pygame.draw.circle(screen,(255,0,0),(coord[0]*tile_width+tile_width/2,coord[1]*tile_height+tile_height/2),tile_width/2,int(0.04*tile_width))
 
+def draw_transparent_green_square(coord):
+    surf = pygame.Surface((settings.tile_width,settings.tile_height))                    
+    surf.set_alpha(128)
+    surf.fill((0,255,0))
+    if settings.flip:
+        settings.screen.blit(surf,(coord[0]*settings.tile_width,(7-coord[1])*settings.tile_height))
+    else:    
+        settings.screen.blit(surf,(coord[0]*settings.tile_width,coord[1]*settings.tile_height))
+    
 
 def mark_allowed_moves(new_board,allowed_moves,piece):
     tile_width = settings.tile_width
