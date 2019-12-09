@@ -45,6 +45,7 @@ plot_board(new_board)
 img=None
 image_draging = False
 piece = None
+marked_piece = None
 allowed_moves = []
 offset_x = None
 offset_y = None
@@ -93,33 +94,52 @@ while running:
                     i = 7-i
                     mouse_y = (settings.board_height-settings.tile_height) - mouse_y
                 if coord_inside_board((j,i)) and new_board.board[i][j].id != "-" and new_board.board[i][j].alliance == settings.turn:
-                    img = load_image(new_board,(i,j))
-                    piece = new_board.board[i][j]
-                    allowed_moves = new_board.board[i][j].allowed_moves(new_board)
-                    mark_allowed_moves(new_board,allowed_moves,piece)
-                    new_board.board[i][j] = Null((j,i))
-                    image_draging = True
-                    x,y = j*settings.tile_width, i*settings.tile_height
-                    offset_x, offset_y = mouse_x - x, mouse_y-y 
-                    initial_square = (j,i)
+                    if marked_piece == None or (marked_piece!=None and marked_piece.coord != (j,i)):
+                        img = load_image(new_board,(i,j))
+                        piece = new_board.board[i][j]
+                        allowed_moves = new_board.board[i][j].allowed_moves(new_board)
+                        mark_allowed_moves(new_board,allowed_moves,piece)
+                        new_board.board[i][j] = Null((j,i))
+                        x,y = j*settings.tile_width, i*settings.tile_height
+                        offset_x, offset_y = mouse_x - x, mouse_y-y 
+                        initial_square = (j,i)
+                        image_draging = True
 
-            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and image_draging:
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 image_draging = False
                 mouse_x, mouse_y = event.pos
                 m, l = int(mouse_x / settings.tile_width), int(mouse_y / settings.tile_height)
                 if settings.flip:
                     l = 7-l
                 if (m,l) in allowed_moves: 
-                    temp_initial_square, temp_final_square, move_accepted, taken_piece = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),initial_square)
+                    if marked_piece == None and piece!=None:
+                        temp_initial_square, temp_final_square, move_accepted, taken_piece = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),initial_square)
+                    elif marked_piece!=None:
+                        temp_initial_square, temp_final_square, move_accepted, taken_piece = accept_move_only_if_doesnt_result_in_check(new_board,marked_piece,(m,l),initial_square)
+                        new_board.board[marked_piece.coord[1]][marked_piece.coord[0]] = Null(marked_piece.coord)
                     if temp_initial_square:
                         settings.initial_square = temp_initial_square
                     if temp_final_square:
                         settings.final_square = temp_final_square
-                else:
+                elif (m,l) == initial_square and piece!=None:
                     reject_move(new_board,piece)
+                    marked_piece = piece
+                else:
+                    if piece!=None:
+                        reject_move(new_board,piece)
                 plot_canvas()
+                if marked_piece!=None and (m,l) == marked_piece.coord and not move_accepted:
+                    surf = pygame.Surface((settings.tile_width,settings.tile_height))                    
+                    surf.set_alpha(128)
+                    surf.fill((0,255,0))
+                    if settings.flip:
+                        screen.blit(surf,(m*settings.tile_width,(7-l)*settings.tile_height))
+                    else:    
+                        screen.blit(surf,(m*settings.tile_width,l*settings.tile_height))
                 plot_board(new_board)
                 mark_king(new_board)
+                if marked_piece!=None and (m,l) == marked_piece.coord and not move_accepted:
+                    mark_allowed_moves(new_board,allowed_moves,piece)
 
             elif event.type == pygame.MOUSEMOTION and image_draging:
                 mouse_x, mouse_y = event.pos
@@ -176,10 +196,11 @@ while running:
                     data = [player_alliance, settings.initial_square, settings.final_square,settings.time]
                 s.sendall(pickle.dumps(data))
                 print('sent: ', data)
-                mark_king(new_board)
                 move_accepted = False
                 settings.history.append((data,taken_piece))
                 settings.seek = len(settings.history)-1
+                marked_piece = None
+                piece = None
 
             
 
@@ -245,6 +266,5 @@ while running:
         text = font.render(msg, 1, (0,0,255), True)
         settings.screen.blit(text,((settings.board_width-text_width)/2, (settings.board_height-text_height)/2))
         settings.timeout = True
-
     pygame.display.update()
     pygame.time.Clock().tick(100)
