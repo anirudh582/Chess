@@ -104,6 +104,9 @@ while running:
                         offset_x, offset_y = mouse_x - x, mouse_y-y 
                         initial_square = (j,i)
                         image_draging = True
+                    if marked_piece!=None and marked_piece.coord == (j,i):
+                        marked_piece=None
+                        initial_square = ()
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 image_draging = False
