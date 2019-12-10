@@ -137,10 +137,12 @@ while running:
                         reject_move(new_board,piece)
                     piece=None
                     marked_piece=None
-                plot_canvas()
+                if int(settings.time*60)>0 and not settings.checkmate:
+                    plot_canvas()
                 if marked_piece!=None and (m,l) == marked_piece.coord and not move_accepted:
                     draw_transparent_green_square((m,l))
-                plot_board(new_board)
+                if int(settings.time*60)>0 and not settings.checkmate:
+                    plot_board(new_board)
                 mark_king(new_board)
                 if marked_piece!=None and (m,l) == marked_piece.coord and not move_accepted:
                     mark_allowed_moves(new_board,allowed_moves,piece)
@@ -194,10 +196,15 @@ while running:
             elif event.type == pygame.USEREVENT:
                 if len(settings.history)>1 and not settings.listening_thread_started and int(settings.time*60)>0 and not settings.checkmate:
                     settings.time = settings.time - 1/60
+
                 elif len(settings.history)>1 and settings.listening_thread_started and int(settings.opponent_time*60)>0 and not settings.checkmate:
                     settings.opponent_time = settings.opponent_time - 1/60
 
             if move_accepted:
+
+                if len(settings.history)>1 and not settings.listening_thread_started and int(settings.time*60)>0 and not settings.checkmate:
+                    settings.time += settings.increment/60
+
                 if settings.flip:
                     data = [player_alliance, (7-settings.initial_square[0],settings.initial_square[1]), (7-settings.final_square[0],settings.final_square[1]),settings.time]
                 else:
@@ -209,6 +216,7 @@ while running:
                 settings.seek = len(settings.history)-1
                 marked_piece = None
                 piece = None
+                
 
             
 

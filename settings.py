@@ -32,6 +32,7 @@ timeout = False
 history = []
 seek = -1
 time = 15
+increment = 15
 opponent_time = time
 status = 'not ready'
 status_thread_started = False
