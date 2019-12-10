@@ -43,6 +43,7 @@ plot_board(new_board)
 
 
 img=None
+image_clicking = False
 image_draging = False
 piece = None
 marked_piece = None
@@ -103,15 +104,15 @@ while running:
                         x,y = j*settings.tile_width, i*settings.tile_height
                         offset_x, offset_y = mouse_x - x, mouse_y-y 
                         initial_square = (j,i)
+                        marked_piece=None
                     if marked_piece!=None and marked_piece.coord == (j,i):
                         marked_piece=None
                         initial_square = ()
                         new_board.board[i][j] = Null((j,i))
                     draw_transparent_green_square((j,i))
-                    image_draging = True
+                    image_clicking = True
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                image_draging = False
                 temp_initial_square=()
                 temp_final_square=()
                 mouse_x, mouse_y = event.pos
@@ -119,11 +120,11 @@ while running:
                 if settings.flip:
                     l = 7-l
                 if (m,l) in allowed_moves: 
-                    if marked_piece == None and piece!=None:
+                    if (marked_piece == None and piece!=None and initial_square) or image_draging:
                         temp_initial_square, temp_final_square, move_accepted, taken_piece = accept_move_only_if_doesnt_result_in_check(new_board,piece,(m,l),piece.coord)
                     elif marked_piece!=None:
-                        temp_initial_square, temp_final_square, move_accepted, taken_piece = accept_move_only_if_doesnt_result_in_check(new_board,marked_piece,(m,l),marked_piece.coord)
                         new_board.board[marked_piece.coord[1]][marked_piece.coord[0]] = Null(marked_piece.coord)
+                        temp_initial_square, temp_final_square, move_accepted, taken_piece = accept_move_only_if_doesnt_result_in_check(new_board,marked_piece,(m,l),marked_piece.coord)
                     if temp_initial_square:
                         settings.initial_square = temp_initial_square
                     if temp_final_square:
@@ -134,6 +135,8 @@ while running:
                 else:
                     if piece!=None:
                         reject_move(new_board,piece)
+                    piece=None
+                    marked_piece=None
                 plot_canvas()
                 if marked_piece!=None and (m,l) == marked_piece.coord and not move_accepted:
                     draw_transparent_green_square((m,l))
@@ -141,8 +144,10 @@ while running:
                 mark_king(new_board)
                 if marked_piece!=None and (m,l) == marked_piece.coord and not move_accepted:
                     mark_allowed_moves(new_board,allowed_moves,piece)
+                image_clicking = False
+                image_draging = False
 
-            elif event.type == pygame.MOUSEMOTION and image_draging:
+            elif event.type == pygame.MOUSEMOTION and image_clicking:
                 mouse_x, mouse_y = event.pos
                 plot_canvas()
                 draw_transparent_green_square(piece.coord)
@@ -152,6 +157,7 @@ while running:
                     screen.blit(img,(mouse_x-offset_x,mouse_y+offset_y))
                 else:
                     screen.blit(img,(mouse_x-offset_x,mouse_y-offset_y))
+                image_draging = True
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
