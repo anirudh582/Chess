@@ -146,6 +146,7 @@ while running:
                 mark_king(new_board)
                 if marked_piece!=None and (m,l) == marked_piece.coord and not move_accepted:
                     mark_allowed_moves(new_board,allowed_moves,piece)
+                mark_move()
                 image_clicking = False
                 image_draging = False
 
